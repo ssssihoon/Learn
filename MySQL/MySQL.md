@@ -1,7 +1,4 @@
-https://www.yalco.kr/@sql/1-5/ 
-
-참고
-
+- [참고한 사이트](https://www.yalco.kr/)
 
 # MySQL
 
