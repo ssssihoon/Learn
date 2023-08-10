@@ -657,3 +657,83 @@ select
 from Customers
 group by Country;
 ```
+
+# 쿼리 안에 서브쿼리
+
+## 비상관 서브쿼리
+
+```sql
+select * from Products
+where Price < (
+	select avg(Price) from Products
+);
+
+-- select avg(Price) from Products 이 쿼리 값은 28.866~ 값을 가지게 되는데 이 값보다 작은 값만 선택하겠다 라는 뜻
+```
+
+```sql
+select
+	SupplierID, Unit
+from Products
+where
+	SupplierID in
+	(SELECT SupplierID FROM Products where SupplierID > 3);
+```
+
+| ~ ALL | 서브쿼리의 모든 결과에 대해 ~하다 |
+| --- | --- |
+| ~ ANY | 서브쿼리의 하나 이상의 결과에 대해 ~하다 |
+
+```sql
+select * from Products
+where Price > ALL (
+	select Price from Products
+    where CategoryID = 2
+);
+
+-- CatrgoryID 가 2인 상품의 가격들 보다 비싼 상품들 출력
+-- MAX(Price(ID=2 인 값 그 이상을 출력한다는 뜻
+-- any라면 min이 되겠죠?
+```
+
+## 상관 서브쿼리
+
+```sql
+select
+	ProductID, ProductName,
+    (
+    select CategoryName from Categories as C
+    where C.CategoryID = P.CategoryID
+    ) as CategoryName
+from Products as P;
+
+-- Categories의 Name과 Products의 Name이 일치할 때 그것을 CategoryName이라고 부르고
+-- ProductID와 ProductName과 CategoryName 출력
+```
+
+## (NOT)EXISTS
+
+```sql
+select
+	CategoryID, CategoryName
+from Categories as C
+where exists (
+	select * from Products as P
+    where P.CategoryID = C.CategoryID
+    and P.Price > 80
+);
+
+-- CategoryID의 Price가 80이 넘는 것이 있는가?를 출력
+```
+
+# JOIN
+
+## JOIN - INNERJOIN(기본값)
+
+```sql
+select * from Categories as C
+join Products as P
+	on C.CategoryID = P.CategoryID;
+
+-- C.CategoryID 와 P.CategoryID 가 동일한 것을 기준으로 병합하겠다.
+```
