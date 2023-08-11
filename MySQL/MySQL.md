@@ -1,5 +1,94 @@
 - [참고한 사이트](https://www.yalco.kr/)
 
+- [MySQL](#mysql)
+	- [데이터 분석 과정](#데이터-분석-과정)
+		- [데이터 전처리](#데이터-전처리)
+- [데이터베이스](#데이터베이스)
+	- [관계형 데이터베이스](#관계형-데이터베이스)
+		- [구성요소](#구성요소)
+		- [객체](#객체)
+	- [계층형 데이터베이스](#계층형-데이터베이스)
+	- [객체 지향 데이터베이스](#객체-지향-데이터베이스)
+	- [XML 데이터베이스](#xml-데이터베이스)
+- [SQL](#sql)
+	- [명령어](#명령어)
+- [주석](#주석)
+- [SELECT](#select)
+	- [Collumn](#collumn)
+		- [모든 컬럼 선택](#모든-컬럼-선택)
+		- [특정 컬럼 선택](#특정-컬럼-선택)
+		- [다중 컬럼 선택](#다중-컬럼-선택)
+		- [컬럼이 아닌 값 선택](#컬럼이-아닌-값-선택)
+	- [Row](#row)
+	- [특정기준 정렬 ORDER BY](#특정기준-정렬-order-by)
+		- [내림차순 \_ desc](#내림차순-_-desc)
+		- [두 가지 이상의 기준 정렬](#두-가지-이상의-기준-정렬)
+	- [원하는 만큼의 데이터 가져오기](#원하는-만큼의-데이터-가져오기)
+	- [원하는 별명으로 데이터 가져오기](#원하는-별명으로-데이터-가져오기)
+- [연산자](#연산자)
+	- [논리 연산자](#논리-연산자)
+- [함수](#함수)
+	- [숫자 관련](#숫자-관련)
+	- [문자열 관련](#문자열-관련)
+	- [시간 관련](#시간-관련)
+		- [DATE\_FORMAT](#date_format)
+	- [기타 함수](#기타-함수)
+- [그룹](#그룹)
+	- [GROUP BY](#group-by)
+		- [활용](#활용)
+	- [WITH ROLLUP](#with-rollup)
+	- [HAVING](#having)
+	- [DISTINCT](#distinct)
+		- [GROUP BY, DISTINCT 함께 사용](#group-by-distinct-함께-사용)
+- [쿼리 안에 서브쿼리](#쿼리-안에-서브쿼리)
+	- [비상관 서브쿼리](#비상관-서브쿼리)
+	- [상관 서브쿼리](#상관-서브쿼리)
+	- [(NOT)EXISTS](#notexists)
+- [JOIN](#join)
+	- [JOIN - INNERJOIN(기본값)](#join---innerjoin기본값)
+		- [JOIN한 테이블 GROUP 하기](#join한-테이블-group-하기)
+		- [SELF JOIN](#self-join)
+	- [(LEFT, RIGHT) JOIN](#left-right-join)
+	- [CROSS JOIN](#cross-join)
+- [UNION](#union)
+	- [합집함](#합집함)
+	- [교집합](#교집합)
+	- [차집합](#차집합)
+- [MYSQL 사용](#mysql-사용)
+	- [터미널 실행](#터미널-실행)
+	- [Workbench 사용하기](#workbench-사용하기)
+		- [Schema 생성](#schema-생성)
+		- [데이터베이스 삭제 명령어](#데이터베이스-삭제-명령어)
+- [테이블 생성 / 수정 / 삭제](#테이블-생성--수정--삭제)
+	- [테이블 생성](#테이블-생성)
+		- [CREATE TABLE](#create-table)
+	- [테이블 변경](#테이블-변경)
+		- [ALTER TABLE](#alter-table)
+		- [DROP TABLE](#drop-table)
+	- [데이터 삽입](#데이터-삽입)
+		- [INSERT INTO](#insert-into)
+	- [테이블 생성시 제약 넣기](#테이블-생성시-제약-넣기)
+- [자료형](#자료형)
+	- [숫자 자료형](#숫자-자료형)
+		- [고정 소수점](#고정-소수점)
+		- [부동 소수점](#부동-소수점)
+	- [문자 자료형](#문자-자료형)
+		- [문자열](#문자열)
+		- [텍스트](#텍스트)
+	- [시간 자료형](#시간-자료형)
+- [데이터 (변경 / 삭제) 하기](#데이터-변경--삭제-하기)
+	- [DELETE](#delete)
+		- [주어진 조건의 행 삭제하기](#주어진-조건의-행-삭제하기)
+		- [전체 행 삭제하기](#전체-행-삭제하기)
+	- [TRUNCATE](#truncate)
+		- [테이블 초기화](#테이블-초기화)
+	- [UPDATE](#update)
+		- [주어진 조건의 행 수정하기](#주어진-조건의-행-수정하기)
+		- [여러 컬럼 수정하기](#여러-컬럼-수정하기)
+		- [컬럼 데이터 활용하여 수정하기](#컬럼-데이터-활용하여-수정하기)
+		- [****조건문 없이는 모든 행 변경****](#조건문-없이는-모든-행-변경)
+
+
 # MySQL
 
 대소문자를 구분하지 않는다.
@@ -730,6 +819,8 @@ where exists (
 
 ## JOIN - INNERJOIN(기본값)
 
+- on : 어떤 컬럼을 기준으로 ?
+
 ```sql
 select * from Categories as C
 join Products as P
@@ -737,3 +828,331 @@ join Products as P
 
 -- C.CategoryID 와 P.CategoryID 가 동일한 것을 기준으로 병합하겠다.
 ```
+
+- JOIN할 때 ambiguous를 주의해야 한다.
+    
+    CategoryID는 두개이므로(같은 컬럼이 있는 경우) 이를 구별할 수 있는 P. or C. 등으로 별칭을 사용해 테이블의 컬럼을 정의 해야함
+    
+
+### JOIN한 테이블 GROUP 하기
+
+```sql
+SELECT 
+  C.CategoryName,
+  MIN(O.OrderDate) AS FirstOrder,
+  MAX(O.OrderDate) AS LastOrder,
+  SUM(D.Quantity) AS TotalQuantity
+FROM Categories C
+JOIN Products P 
+  ON C.CategoryID = P.CategoryID
+JOIN OrderDetails D
+  ON P.ProductID = D.ProductID
+JOIN Orders O
+  ON O.OrderID = D.OrderID
+GROUP BY C.CategoryID;
+```
+
+### SELF JOIN
+
+- 같은 테이블 끼리도 가능하다.
+
+## (LEFT, RIGHT) JOIN
+
+- NULL값을 채워준다.
+
+## CROSS JOIN
+
+모든 경우의 수를 확인할 수 있다.
+
+- 조건 없이 모든 조합 반환 A*B
+
+```sql
+select
+	E1.LastName, E2.FirstName
+from Employees as E1
+cross join Employees as E2
+order by E1.EmployeeID;
+
+-- 모든 조합이 나온다.
+```
+
+# UNION
+
+| UNION | 중복을 제거한 집합 |
+| --- | --- |
+| UNION ALL | 중복을 제거하지 않은 집합 |
+
+## 합집함
+
+```sql
+select CustomerName as Name, City, Country, 'CUSTOMER'
+from Customers
+union
+select SupplierName as Name, City, Country, 'SUPPLIER'
+from Suppliers;
+
+-- 데이터들이 union으로 인해 합쳐진다.
+```
+
+## 교집합
+
+```sql
+select CategoryID as ID
+from Categories as C ,Employees as E
+where
+	C.CategoryID > 4
+	and E.EmployeeID % 2 = 0
+	and C.CategoryID = E.EmployeeID;
+```
+
+## 차집합
+
+```sql
+select CategoryID as ID
+from Categories
+where
+	C.CategoryID > 4
+	and CategoryID not in (
+	select Employees
+	from Employees
+	where EmployeeID % 2 = 0
+	);
+```
+
+# MYSQL 사용
+
+## 터미널 실행
+
+• `mysql.server start`
+
+## Workbench 사용하기
+
+### Schema 생성
+
+```sql
+create schema schema_name collate utf8mb4_general_ci;
+```
+
+| utf8mb4 | 한글을 포함한 전세계 문자 + 이모티콘 사용 가능 |
+| --- | --- |
+| utf8mb4 _ general _ ci | 가장 정확하지는 않지만 정렬 속도 빠름 |
+
+### 데이터베이스 삭제 명령어
+
+```sql
+drop database 'schema_name';
+```
+
+# 테이블 생성 / 수정 / 삭제
+
+## 테이블 생성
+
+### CREATE TABLE
+
+```sql
+create table people (
+    person_id int,
+    person_name varchar(10),
+    age tinyint,
+    birthday date
+);
+
+-- people 이라는 TABLE 생성됨.
+```
+
+## 테이블 변경
+
+### ALTER TABLE
+
+```sql
+alter table people rename to friends,  -- 테이블 변경
+change column person_id person_id tinyint, -- 컬럼 자료형 변경
+change column person_name person_nickname varchar(10),  -- 컬럼명 변경
+drop column birthday,  -- 컬럼 삭제
+add column is_married tinyint after age; -- 컬럼 추가
+```
+
+### DROP TABLE
+
+```sql
+drop table friends; -- 테이블 삭제
+```
+
+## 데이터 삽입
+
+### INSERT INTO
+
+```sql
+insert into people
+(person_id, person_name, age, birthday)
+VALUES
+  (1, '홍길동', 21 , '2000-01-31')
+	(2, '황시훈', 24 , '2000-06-20')
+
+```
+
+```sql
+insert into people
+VALUES
+	(2, '전우치', 18 , '2003-05-12') -- 모든 컬럼명에 넣을 경우 컬럼명을 생략할 수 있다.
+```
+
+```sql
+insert into people
+(person_id, person_name, age, birthday)
+VALUES
+  (1, '홍길동', '2000-01-31') -- 자료형에 맞지 않으면 오류가 발생하고, 그저 생략했을 시 NULL값 형성
+
+```
+
+## 테이블 생성시 제약 넣기
+
+| AUTO_INCREMENT | 새 행 생성시마다 자동으로 1씩 증가 |
+| --- | --- |
+| PRIMARY KEY | 중복 입력 불가, NULL(빈 값) 불가 |
+| UNIQUE | 중복 입력 불가 |
+| NOT NULL | NULL(빈 값) 입력 불가 |
+| UNSIGNED | (숫자일시) 양수만 가능 |
+| DEFAULT | 값 입력이 없을 시 기본값 |
+
+**PRIMARY KEY**
+
+- 테이블마다 하나만 가능
+
+```sql
+create table people (
+    person_id int auto_increment primary key, -- 그래서 행마다 값을 넣을 필요가 없다.
+    person_name varchar(10) not null,
+    nickname varchar(10) unique not null,
+    age tinyint unsigned,
+    is_married tinyint default 0
+)
+```
+
+# 자료형
+
+## 숫자 자료형
+
+| 정수형 | 바이트 | SIGNED |
+| --- | --- | --- |
+| TINYINT | 1 | -128 ~ 127 |
+| SMALLINT | 2 | -32,768 ~ 32,767 |
+| MEDIUMINT | 3 |  |
+| INT | 4 |  |
+| BIGINT | 8 |  |
+
+### 고정 소수점
+
+| DECIMAL( s, d ) | 실수 부분 자릿수( s ) , 소수 부분 자릿수 ( d ) |
+| --- | --- |
+
+### 부동 소수점
+
+| FLOAT |
+| --- |
+| DOUBLE |
+
+## 문자 자료형
+
+### 문자열
+
+| CHAR | 고정 사이즈 | s | 최대 바이트 255 |
+| --- | --- | --- | --- |
+| VARCHAR | 가변 사이즈 | 실제 글자 수 + 1  | 최대 바이트 65535 |
+- 검색시 CHAR가 더 빠름
+- VARCHAR 컬럼 길이값이 4글자보다 적을 경우 CHAR로 자동 변환
+- CHAR는 강제로 4바이트를 차지 but, VARCHAR는 글자 수 값 대로 바이트를 차지(실제 길이대로)
+
+### 텍스트
+
+| TINYTEXT | 255 |
+| --- | --- |
+| TEXT | 65,535 |
+| MEDIUMTEXT |  |
+| LONGTEXT |  |
+
+## 시간 자료형
+
+| DATE | YYYY-MM-DD |  |
+| --- | --- | --- |
+| TIME | HHH:MI:SS |  |
+| DATETIME | YYYY-MM-DD HH:MI:SS | 입력된 시간을 그 값 자체로 저장 |
+| TIMESTAMP | YYYY-MM-DD HH:MI:SS | 컴퓨터의 시간대를 기준으로 저장 |
+- 보통적인 상황인 경우 DATETIME
+- 국제적인 경우 TIMESTAMP 사용
+
+# 데이터 (변경 / 삭제) 하기
+
+| DELETE | 행 삭제 |
+| --- | --- |
+| TRUNCATE | 초기화 |
+| UPDATE | 행 수정 |
+
+## DELETE
+
+### 주어진 조건의 행 삭제하기
+
+```sql
+delete from businesses
+where status = 'CLS';
+```
+
+### 전체 행 삭제하기
+
+```sql
+delete from businesses;
+```
+
+- delete로 지우고 새로 데이터를 추가하면  index번호는 그 전 데이터 인덱스에 이어서 자동으로 채워짐 (ex 1, 2, 3 (X) → 18, 19, 20 (O)
+
+## TRUNCATE
+
+### 테이블 초기화
+
+```sql
+ truncate businesses;
+```
+
+- delete와 다르게 새로운 데이터를 추가하면 index번호는 처음부터 1, 2, 3 ‘’’ 이다.
+
+## UPDATE
+
+### 주어진 조건의 행 수정하기
+
+```sql
+update menus
+set menu_name = '삼선짜장'
+where menu_id = 12;
+
+	--12번 항목의 메뉴이름을 삼선짜장으로 변경
+```
+
+### 여러 컬럼 수정하기
+
+```sql
+update menus
+set 
+    menu_name = '열정떡볶이', 
+    kilocalories = 492.78,
+    price = 5000
+where
+    fk_business_id = 4
+    and menu_id = '국물떡볶이';
+```
+
+### 컬럼 데이터 활용하여 수정하기
+
+```sql
+update menus
+set price = price + 1000
+where fk_business_id = 8;
+```
+
+### ****조건문 없이는 모든 행 변경****
+
+```sql
+update menus
+set menu_name = '획일화';
+```
+
+WHERE문을 넣어 조건문을 사용하자.
