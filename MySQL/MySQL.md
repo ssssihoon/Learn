@@ -162,7 +162,6 @@ DBMS와 통신하기 위한 언어
 ## 명령어
 
 | DML | Data Manipulation Language | 데이터 조작어 |
-| --- | --- | --- |
 | DDL | Data Definition Language | 데이터 정의어 |
 | DCL | Data Control Language | 데이터 제어어 |
 | TCL | Transaction Control Language | 트랜잭션 제어어 |
@@ -284,7 +283,6 @@ from customers;
 # 연산자
 
 | + | 더하기 |
-| --- | --- |
 | - | 빼기 |
 | * | 곱하기 |
 | / | 나누기 |
@@ -312,7 +310,6 @@ select '1' + '002' * 3
 ## 논리 연산자
 
 | TRUE | 참 |
-| --- | --- |
 | FALSE | 거짓 |
 | NOT, ! | 반대 |
 | AND | 모두 |
@@ -320,7 +317,6 @@ select '1' + '002' * 3
 - <> 는 ≠ 과 같다
 
 | BETWEEN [MIN] AND [MAX] | 두 값 사이에 있다. |
-| --- | --- |
 
 ```sql
 select 5 between 2 and 10;
@@ -328,7 +324,6 @@ select 5 between 2 and 10;
 ```
 
 | LIKE’…%…’ | 0~N개 문자를 가진 패턴 |
-| --- | --- |
 | LIKE’…_…’ | _개수 만큼의 문자를 가진 패턴 |
 
 ```sql
@@ -368,7 +363,6 @@ WHERE OrderID LIKE '1025_'
 ## 숫자 관련
 
 | ROUND | 반올림 |
-| --- | --- |
 | CEIL | 올림 |
 | FLOOR | 내림 |
 
@@ -378,7 +372,6 @@ select round(0.012);
 ```
 
 | ABS | 절대값 |
-| --- | --- |
 
 ```sql
 select abs(5.3);
@@ -386,7 +379,6 @@ select abs(5.3);
 ```
 
 | GREATEST | 괄호 안의 가장 큰 값 |
-| --- | --- |
 | LEAST | 괄호 안의 가장 작은 값 |
 
 ```sql
@@ -397,14 +389,12 @@ select least(6, 2, 1);
 ```
 
 | MAX | 최대값 |
-| --- | --- |
 | MIN | 최소값 |
 | COUNT | 갯수 |
 | SUM | 합 |
 | AVG | 평균 |
 
 | POW(A, B), POWER(A, B) | A를 B만큼 제곱 |
-| --- | --- |
 | SQRT | 제곱근 |
 
 ```sql
@@ -414,7 +404,6 @@ select
 ```
 
 | TRUNCATE(N,n) | N을 소숫점 n자리까지 선택 |
-| --- | --- |
 
 ```sql
 select
@@ -425,7 +414,6 @@ select
 ## 문자열 관련
 
 | UCASE, UPPER | 모두 대문자로 |
-| --- | --- |
 | LCASE, LOWER | 모두 소문자로 |
 
 ```sql
@@ -435,7 +423,6 @@ select
 ```
 
 | CONCAT(...) | 괄호 안의 내용 이어붙임 |
-| --- | --- |
 | CONCAT_WS(S, ...) | 괄호 안의 내용 S로 이어붙임 |
 
 ```sql
@@ -449,7 +436,6 @@ select
 ```
 
 | SUBSTR, SUBSTRING | 주어진 값에 따라 문자열 자름 |
-| --- | --- |
 | LEFT | 왼쪽부터 N글자 |
 | RIGHT | 오른쪽부터 N글자 |
 
@@ -467,14 +453,12 @@ select
 ```
 
 | LENGTH | 문자열의 바이트 길이 |
-| --- | --- |
 | CHAR_LENGTH, CHARACTER_LEGNTH | 문자열의 문자 길이 |
 - CHAR_LENGTH, CHARACTER_LEGNTH 이것이 흔히 아는 len()이다.
 - LENGTH는 한글에서 바이트 길이가 나오기 때문
     
     
     | TRIM | 양쪽 공백 제거 |
-    | --- | --- |
     | LTRIM | 왼쪽 공백 제거 |
     | RTRIM | 오른쪽 공백 제거 |
 
@@ -489,7 +473,6 @@ select
 ```
 
 | LPAD(S, N, P) | S가 N글자가 될 때까지 P를 이어붙임 |
-| --- | --- |
 | RPAD(S, N, P) | S가 N글자가 될 때까지 P를 이어붙임 |
 
 ```sql
@@ -500,7 +483,6 @@ select
 ```
 
 | REPLACE(S, A, B) | S중 A를 B로 변경 |
-| --- | --- |
 
 ```sql
 select
@@ -510,7 +492,6 @@ select
 ```
 
 | INSTR(S, s) | S중 s의 첫 위치 반환, 없을 시 0 |
-| --- | --- |
 
 ```sql
 select
@@ -526,7 +507,6 @@ select
 ```
 
 | CAST(A AS T) | A를 T 자료형으로 변환 |
-| --- | --- |
 | CONVERT(A, T) | A를 T 자료형으로 변환 |
 
 ```sql
@@ -540,7 +520,6 @@ select
 ## 시간 관련
 
 | CURRENT_DATE, CURDATE | 현재 날짜 반환 |
-| --- | --- |
 | CURRENT_TIME, CURTIME | 현재 시간 반환 |
 | CURRENT_TIMESTAMP, NOW | 현재 시간과 날짜 반환 |
 
@@ -552,7 +531,6 @@ select
 ```
 
 | DATE | 문자열에 따라 날짜 생성 |
-| --- | --- |
 | TIME | 문자열에 따라 시간 생성 |
 
 ```sql
@@ -566,7 +544,6 @@ SELECT
 ```
 
 | YEAR | 주어진 DATETIME값의 년도 반환 |
-| --- | --- |
 | MONTHNAME | 주어진 DATETIME값의 월(영문) 반환 |
 | MONTH | 주어진 DATETIME값의 월 반환 |
 | WEEKDAY | 주어진 DATETIME값의 요일값 반환(월요일: 0) |
@@ -576,7 +553,6 @@ SELECT
 ---
 
 | HOUR | 주어진 DATETIME의 시 반환 |
-| --- | --- |
 | MINUTE | 주어진 DATETIME의 분 반환 |
 | SECOND | 주어진 DATETIME의 초 반환 |
 
@@ -586,7 +562,6 @@ select
 ```
 
 | ADDDATE, DATE_ADD | 시간/날짜 더하기 |
-| --- | --- |
 | SUBDATE, DATE_SUB | 시간/날짜 빼기 |
 
 시간/날짜 끼리의 덧,뺄셈이 가능한 함수이다.
@@ -594,18 +569,15 @@ select
 ---
 
 | DATE_DIFF | 두 시간/날짜 간 일수차 |
-| --- | --- |
 | TIME_DIFF | 두 시간/날짜 간 시간차 |
 
 | LAST_DAY | 해당 달의 마지막 날짜 |
-| --- | --- |
 
 ### DATE_FORMAT
 
 - 시간/날짜를 지정한 형식으로 반환
 
 | %Y | 년도 4자리 |
-| --- | --- |
 | %y | 년도 2자리 |
 | %M | 월 영문 |
 | %m | 월 숫자 |
@@ -625,14 +597,12 @@ select
 ```
 
 | STR _ TO _ DATE(S, F) | S를 F형식으로 해석하여 시간/날짜 생성 |
-| --- | --- |
 
 str -> date형식으로 생성 가능하다.
 
 ## 기타 함수
 
 | IF(조건, T, F) | 조건이 참이라면 T, 거짓이면 F 반환 |
-| --- | --- |
 
 ```sql
 select
@@ -651,7 +621,6 @@ end;
 ```
 
 | IFNULL(A, B) | A가 NULL일 시 B 출력 |
-| --- | --- |
 
 ```sql
 select
@@ -664,7 +633,6 @@ select
 - 다음 함수들은 group by에서 사용된다.
 
 | MAX | 가장 큰 값 |
-| --- | --- |
 | MIN | 가장 작은 값 |
 | COUNT | 갯수 (NULL값 제외) |
 | SUM | 총합 |
@@ -770,7 +738,6 @@ where
 ```
 
 | ~ ALL | 서브쿼리의 모든 결과에 대해 ~하다 |
-| --- | --- |
 | ~ ANY | 서브쿼리의 하나 이상의 결과에 대해 ~하다 |
 
 ```sql
@@ -879,7 +846,6 @@ order by E1.EmployeeID;
 # UNION
 
 | UNION | 중복을 제거한 집합 |
-| --- | --- |
 | UNION ALL | 중복을 제거하지 않은 집합 |
 
 ## 합집함
@@ -934,7 +900,6 @@ create schema schema_name collate utf8mb4_general_ci;
 ```
 
 | utf8mb4 | 한글을 포함한 전세계 문자 + 이모티콘 사용 가능 |
-| --- | --- |
 | utf8mb4 _ general _ ci | 가장 정확하지는 않지만 정렬 속도 빠름 |
 
 ### 데이터베이스 삭제 명령어
@@ -1008,7 +973,6 @@ VALUES
 ## 테이블 생성시 제약 넣기
 
 | AUTO_INCREMENT | 새 행 생성시마다 자동으로 1씩 증가 |
-| --- | --- |
 | PRIMARY KEY | 중복 입력 불가, NULL(빈 값) 불가 |
 | UNIQUE | 중복 입력 불가 |
 | NOT NULL | NULL(빈 값) 입력 불가 |
@@ -1034,7 +998,6 @@ create table people (
 ## 숫자 자료형
 
 | 정수형 | 바이트 | SIGNED |
-| --- | --- | --- |
 | TINYINT | 1 | -128 ~ 127 |
 | SMALLINT | 2 | -32,768 ~ 32,767 |
 | MEDIUMINT | 3 |  |
@@ -1044,12 +1007,10 @@ create table people (
 ### 고정 소수점
 
 | DECIMAL( s, d ) | 실수 부분 자릿수( s ) , 소수 부분 자릿수 ( d ) |
-| --- | --- |
 
 ### 부동 소수점
 
 | FLOAT |
-| --- |
 | DOUBLE |
 
 ## 문자 자료형
@@ -1057,7 +1018,6 @@ create table people (
 ### 문자열
 
 | CHAR | 고정 사이즈 | s | 최대 바이트 255 |
-| --- | --- | --- | --- |
 | VARCHAR | 가변 사이즈 | 실제 글자 수 + 1  | 최대 바이트 65535 |
 - 검색시 CHAR가 더 빠름
 - VARCHAR 컬럼 길이값이 4글자보다 적을 경우 CHAR로 자동 변환
@@ -1066,7 +1026,6 @@ create table people (
 ### 텍스트
 
 | TINYTEXT | 255 |
-| --- | --- |
 | TEXT | 65,535 |
 | MEDIUMTEXT |  |
 | LONGTEXT |  |
@@ -1074,7 +1033,6 @@ create table people (
 ## 시간 자료형
 
 | DATE | YYYY-MM-DD |  |
-| --- | --- | --- |
 | TIME | HHH:MI:SS |  |
 | DATETIME | YYYY-MM-DD HH:MI:SS | 입력된 시간을 그 값 자체로 저장 |
 | TIMESTAMP | YYYY-MM-DD HH:MI:SS | 컴퓨터의 시간대를 기준으로 저장 |
@@ -1084,7 +1042,6 @@ create table people (
 # 데이터 (변경 / 삭제) 하기
 
 | DELETE | 행 삭제 |
-| --- | --- |
 | TRUNCATE | 초기화 |
 | UPDATE | 행 수정 |
 
