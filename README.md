@@ -1,4 +1,4 @@
-# Learning ...
+# Learn
 [MySQL](https://github.com/ssssihoon/Learning/blob/main/MySQL/MySQL.md)
 
 
