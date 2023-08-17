@@ -24,6 +24,8 @@ print(df.head())
 
 ## 시리즈와 데이터프레임
 
+시리즈 : **엑셀의 행열 중에 한줄의 열로만 구성된 테이블**
+
 - 시리즈 : 시트의 열 1개
 - 데이터 프레임 : 딕셔너리와 같다
 
@@ -442,3 +444,384 @@ print(Scientists)
 ```
 
 ## 시리즈 다루기
+
+### 시리즈 선택
+
+df
+
+```python
+Scientists = pd.DataFrame(
+    data = {'Occupation': ['Chemist', 'Statistictian'], 
+            'Born' : ['1920-07-25', '1876-06-13'], 
+            'Died' : ['1958-04-16', '1937-10-16'], 
+            'Age' : [37, 61]}, 
+    index = ['Rosaline Franklin', 'William Gosset'], 
+    columns = ['Occupation', 'Born', 'Died', 'Age'])
+```
+
+데이터프레임에서 시리즈를 선택하려면 loc속성에 인덱스(Scientist)를 전달하면 된다.
+
+```python
+firstrow = Scientists.loc['William Gosset']
+print(firstrow)
+
+'''
+Occupation    Statistictian
+Born             1876-06-13
+Died             1937-10-16
+Age                      61
+Name: William Gosset, dtype: object
+'''
+여기서 Age가 정수형인데 무시되고, object형으로 된다.
+```
+
+### index, value, keys
+
+**index, value는 시리즈 속성이고, keys는 메서드이다.**
+
+- index
+
+시리즈의 인덱스 출력
+
+```python
+print(firstrow.index)
+
+'''
+Index(['Occupation', 'Born', 'Died', 'Age'], dtype='object')
+'''
+
+print(firstrow.index[0])
+'''
+Occupation
+'''
+```
+
+- value
+
+시리즈의 데이터 출력
+
+```python
+print(firstrow.values)
+
+'''
+['Statistictian' '1876-06-13' '1937-10-16' 61]
+'''
+```
+
+- keys
+
+== index
+
+```python
+print(firstrow.keys())
+
+'''
+Index(['Occupation', 'Born', 'Died', 'Age'], dtype='object')
+'''
+
+print(firstrow.keys()[0])
+'''
+Occupation
+'''
+```
+
+---
+
+```python
+print(Scientists['Age'])
+
+'''
+Rosaline Franklin    37
+William Gosset       61
+Name: Age, dtype: int64
+'''
+```
+
+| 시리즈 메서드 |  |
+| --- | --- |
+| append | 시리즈 연결 |
+| describe | 요약 통계량 계산 |
+| drop_duplicates | 중복 없는 시리즈 반환 |
+| equals | 시리즈에 해당 값을 가진 요소가 있는지 확인 |
+| get_values | 시리즈 값 구하기 |
+| isin | 시리즈에 포함된 값이 있는지 확인 |
+| min | 최솟값 |
+| max | 최댓값 |
+| mean | 평균값 |
+| median | 중간값 |
+| replace | 시리즈 값 교체 |
+| sample | 시리즈에서 임의의 값을 반환 |
+| sort_values | 값을 정렬 |
+| to_frame | 시리즈를 데이터프레임으로 변환 |
+
+```python
+print(ages.mean())
+print(ages.min())
+---
+```
+
+## 시리즈 불린 추출
+
+```python
+ages = scientists['Age']
+print(ages.max())
+
+'''
+90
+'''
+```
+
+```python
+ages = scientists['Age']
+print(ages[ages > ages.mean()])
+
+'''
+1    61
+2    90
+3    66
+7    77
+Name: Age, dtype: int64
+'''
+```
+
+```python
+print(ages > ages.mean())
+
+'''
+0    False
+1     True
+2     True
+3     True
+4    False
+5    False
+6    False
+7     True
+Name: Age, dtype: bool
+'''
+```
+
+## 시리즈와 브로드캐스팅
+
+브로드캐스트 : 모든 데이터에 대해 한 번에 연산하는 것
+
+벡터 : 시리즈처럼 여러 개의 값을 가진 데이터
+
+스칼라 : 단순 크기를 나타내는 데이터
+
+```python
+print(ages)
+'''
+0    37
+1    61
+2    90
+3    66
+4    56
+5    45
+6    41
+7    77
+Name: Age, dtype: int64
+'''
+```
+
+```python
+print(ages + ages)
+'''
+0     74
+1    122
+2    180
+3    132
+4    112
+5     90
+6     82
+7    154
+Name: Age, dtype: int64
+'''
+벡터의 연산이다.
+```
+
+```python
+print(ages + 100)
+'''
+0    137
+1    161
+2    190
+3    166
+4    156
+5    145
+6    141
+7    177
+Name: Age, dtype: int64
+'''
+벡터에 스칼라 연산하면 벡터의 모든 값에 스칼라를 적용한다.
+```
+
+벡터끼리의 연산 중 서로 길이가 다르면, 누락값 (NaN)이 생긴다.
+
+ex : ) 인덱스 2개의 데이터 + 인덱스 10개의 데이터 → 2개만 연산 , 나머지 NaN
+
+**인덱스의 길이가 일치하다면 연산 가능하다.**
+
+---
+
+### sort_index 메서드
+
+```python
+reverse_ages = ages.sort_index(ascending=False)
+print(reverse_ages)
+
+'''
+7    77
+6    41
+5    45
+4    56
+3    66
+2    90
+1    61
+0    37
+Name: Age, dtype: int64
+'''
+```
+
+## 데이터프레임 다루기
+
+### 불린 추출
+
+```python
+print(scientists[scientists['Age'] > scientists['Age'].mean()])
+'''
+Name        Born        Died  Age     Occupation
+1        William Gosset  1876-06-13  1937-10-16   61   Statistician
+2  Florence Nightingale  1820-05-12  1910-08-13   90          Nurse
+3           Marie Curie  1867-11-07  1934-07-04   66        Chemist
+7          Johann Gauss  1777-04-30  1855-02-23   77  Mathematician
+'''
+```
+
+```python
+print(scientists*2)
+
+'''
+이 연산을 하게되면 데이터의 양이 2배 늘어나는데, 
+정수형은 *2의 연산이 되고, 
+문자열은 문자열이 2배늘어난다.
+'''
+```
+
+## 시리즈, 데이터프레임 데이터 처리
+
+```python
+print(scientists['Born'].dtype)
+
+'''
+object
+'''
+```
+
+Born열은 문자열이다. datetime형식 자료형으로 바꿔주는 것이 좋은데 이를 해보면
+
+```python
+born_datetime = pd.to_datetime(scientists['Born'], format='%Y-%m-%d')
+print(born_datetime)
+
+'''
+0   1920-07-25
+1   1876-06-13
+2   1820-05-12
+3   1867-11-07
+4   1907-05-27
+5   1813-03-15
+6   1912-06-23
+7   1777-04-30
+Name: Born, dtype: datetime64[ns]
+'''
+타입이 바뀌게 된다.
+```
+
+이 컬럼을 추가하려면
+
+```python
+scientists['born_dt'] = born_datetime
+print(scientists.head())
+
+'''
+                   Name        Born        Died  Age    Occupation    born_dt
+0     Rosaline Franklin  1920-07-25  1958-04-16   37       Chemist 1920-07-25
+1        William Gosset  1876-06-13  1937-10-16   61  Statistician 1876-06-13
+2  Florence Nightingale  1820-05-12  1910-08-13   90         Nurse 1820-05-12
+3           Marie Curie  1867-11-07  1934-07-04   66       Chemist 1867-11-07
+4         Rachel Carson  1907-05-27  1964-04-14   56     Biologist 1907-05-27
+'''
+```
+
+새로운 컬럼이 생긴 것을 볼 수 있다.
+
+### 데이터 섞기
+
+```python
+import random
+
+random.seed(42)
+random.shuffle(scientists['Age'])
+```
+
+- seed()는 난수의 기준값이다.
+
+### 데이터프레임 열 삭제
+
+- drop(컬럼, axis = 1)
+
+```python
+print(scientists.columns)
+
+'''
+Index(['Name', 'Born', 'Died', 'Age', 'Occupation'], dtype='object')
+'''
+```
+
+```python
+scientists_del = scientists.drop(['Age'], axis=1)
+print(scientists_del)
+
+'''
+       Name        Born        Died          Occupation
+0     Rosaline Franklin  1920-07-25  1958-04-16             Chemist
+1        William Gosset  1876-06-13  1937-10-16        Statistician
+2  Florence Nightingale  1820-05-12  1910-08-13               Nurse
+3           Marie Curie  1867-11-07  1934-07-04             Chemist
+4         Rachel Carson  1907-05-27  1964-04-14           Biologist
+5             John Snow  1813-03-15  1858-06-16           Physician
+6           Alan Turing  1912-06-23  1954-06-07  Computer Scientist
+7          Johann Gauss  1777-04-30  1855-02-23       Mathematician
+'''
+```
+
+## 데이터 저장, 불러오기
+
+### 피클 저장
+
+- to_pickle
+
+스프레드시트보다 더 작은 용량으로 데이터를 저장
+
+오래보관
+
+```python
+scientists.to_pickle('경로.pickle')
+```
+
+이것을 그냥 열면 안되고, read_pickle 메서드로 읽어야함
+
+```python
+df = pd.read.pickle('경로.pickle')
+```
+
+### csv, tsv
+
+- csv : 데이터를 컴마(,)로 구분한 파일
+- tsv : 데이터를 탭(Tab)으로 구분한 파일
+
+```python
+scientists.to_csv('/Users/sihoon/Desktop/Pandas/scientists.tsv', sep = '\t')
+```
+
+tsv는 sep= ‘\t’를 꼭 넣어줘야함 구분을 tab으로 하니까
