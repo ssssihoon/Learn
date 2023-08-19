@@ -825,3 +825,270 @@ scientists.to_csv('/Users/sihoon/Desktop/Pandas/scientists.tsv', sep = '\t')
 ```
 
 tsv는 sep= ‘\t’를 꼭 넣어줘야함 구분을 tab으로 하니까
+
+# 그래프 그리기
+
+## matplotlib 라이브러리로 그래프 그리기
+
+1. 전체 그래프가 위치할 기본 틀 만들기
+2. 그래프 격자 만들기
+    
+    plt.figure()
+    
+3. 격자에 그래프를 하나씩 추가 (좌 → 우)
+4. ‘’ (다음 행 (상 → 하))
+
+## seaborn 데이터 불러오기
+
+```python
+import seaborn as sns
+
+데이터명을 저장할 변수 이름 = sns.load_dataset('seaborn 데이터명')
+```
+
+### seaborn 데이터의 앤스콤 데이터
+
+```python
+import seaborn as sns
+
+anscombe = sns.load_dataset("anscombe")
+
+print(anscombe.head())
+
+'''
+  dataset     x     y
+0       I  10.0  8.04
+1       I   8.0  6.95
+2       I  13.0  7.58
+3       I   9.0  8.81
+4       I  11.0  8.33
+'''
+```
+
+### matplotlib로 그래프 그리기
+
+- plot 메서드는 기본적으로 선을 그래프로 그려준다.
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+anscombe = sns.load_dataset("anscombe")
+
+dataset_1 = anscombe[anscombe['dataset'] == 'I']
+plt.plot(dataset_1['x'], dataset_1['y'])
+print(plt.show())
+
+# anscombe 데이터에서 dataset이 I인 값을 추출하는데
+# 이 중 x와 y 값을 축으로 사용해 그래프를 출력
+```
+
+사진
+
+- x축, y축, ‘o’ : 세 번째 인자를 ‘o’를 사용해 점으로 나타낼 수 있다.
+
+사진
+
+### 앤스콤 데이터 집합 모두 사용해 그래프 만들기
+
+앤스콤데이터는 4개의 집합으로 구성되어 있는 데 이를 모두 시각화 하려면,
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+anscombe = sns.load_dataset("anscombe")
+
+dataset_1 = anscombe[anscombe['dataset'] == 'I']
+dataset_2 = anscombe[anscombe['dataset'] == 'II']
+dataset_3 = anscombe[anscombe['dataset'] == 'III']
+dataset_4 = anscombe[anscombe['dataset'] == 'IV']
+#data들을 지정해 준다.
+
+fig = plt.figure()
+# 그래프 격자가 위치할 기본 틀 만들기
+
+axes1 = fig.add_subplot(2, 2, 1)
+axes2 = fig.add_subplot(2, 2, 2)
+axes3 = fig.add_subplot(2, 2, 3)
+axes4 = fig.add_subplot(2, 2, 4)
+# add_subplot을 사용 해 그래프 격자 그리기
+# 첫 번째 인자 : 행 크기
+# 두 번째 인자 : 열 크기
+# 세 번째 인자 : n번 째 그래프
+
+axes1.plot(dataset_1['x'], dataset_1['y'], 'o')
+axes2.plot(dataset_2['x'], dataset_2['y'], 'o')
+axes3.plot(dataset_3['x'], dataset_3['y'], 'o')
+axes4.plot(dataset_4['x'], dataset_4['y'], 'o')
+# 점으로 표현한 데이터 그래프
+
+fig
+# 그래프를 확인하려면 fig가 필요하다.
+
+print(plt.show())
+```
+
+사진
+
+### 제목 추가
+
+- 그래프의 제목 추가하기 : set_title
+
+```python
+axes1.set_title("dataset_1")
+axes2.set_title("dataset_2")
+axes3.set_title("dataset_3")
+axes4.set_title("dataset_4")
+```
+
+- 기본 틀(fig)에 제목 추가하기 : suptitle
+
+```python
+fig.suptitle("Ansombe Data")
+
+fig
+```
+
+### 레이아웃 조절
+
+- 여러 그래프 간의 충돌을 방지 할 수 있다.
+
+```python
+fig.tight_layout()
+
+fig
+```
+
+---
+
+df
+
+tips 식당에서 팁을 지불한 손님의 정보
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+print(tips.head())
+
+'''
+   total_bill   tip     sex smoker  day    time  size
+0       16.99  1.01  Female     No  Sun  Dinner     2
+1       10.34  1.66    Male     No  Sun  Dinner     3
+2       21.01  3.50    Male     No  Sun  Dinner     3
+3       23.68  3.31    Male     No  Sun  Dinner     2
+4       24.59  3.61  Female     No  Sun  Dinner     4
+'''
+```
+
+- 기본적인 틀
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+fig = plt.figure()
+axes1 = fig.add_subplot(1, 1, 1)
+print(plt.show())
+```
+
+사진
+
+### 히스토그램 hist
+
+- 일변량
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+fig = plt.figure()
+axes1 = fig.add_subplot(1, 1, 1)
+axes1.hist(tips['total_bill'], bins = 10)
+axes1.set_xlabel('Frequency')
+axes1.set_ylabel('Total Bill')
+
+fig
+
+print(plt.show())
+```
+
+사진
+
+- x축의 간격을 bins 인잣값으로 조정 가능
+- set_xlabel, set_ylabel 축들의 이름을 정할 수 있다.
+
+### 산점도 그래프
+
+- 이변량
+    
+    두개의 변수를 이용해 그래프를 그림
+    
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+fig = plt.figure()
+
+scatter_plot = plt.figure()
+axes1 = scatter_plot.add_subplot(1, 1, 1)
+axes1.scatter(tips['total_bill'], tips['tip'])
+axes1.set_title('Scatterplot of Total Bill vs Tip')
+axes1.set_xlabel('Total Bill')
+axes1.set_ylabel('Tip')
+
+print(plt.show())
+```
+
+사진
+
+기본 틀과 그래프 격자를 만들고 scatter 메서드에 total_bill, tips 열을 전달
+
+### 박스 그래프
+
+이산형 변수(구분이 가능한 변수)와 연속형 변수 (명확하게 셀 수 없는 변수)를 함께 사용하는 그래프 → x, y축으로 표현
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+fig = plt.figure()
+
+boxplot = plt.figure()
+axes1 = boxplot.add_subplot(1, 1, 1)
+
+axes1.boxplot([tips[tips['sex'] == 'Female']['tip'],
+              tips[tips['sex'] == 'Male']['tip']],
+              labels=['Female', 'Male'])
+
+axes1.set_xlabel('Sex')
+axes1.set_ylabel('Tip')
+axes1.set_title('Boxplot of Tips by Sex')
+
+print(plt.show())
+```
+
+사진
+
+tips 데이터프레임에서 성별이 female인 데이터와 male인 데이터에서 tip 열 데이터만 추출해 리스트에 담아 전달 한 것
+
+---
+
+현재까지의 그래프에 대해 복습 철저히 할 것
+
+---
+
+## 다변량 그래프 그리기
+
+3개 이상의 변수를 사용함.
