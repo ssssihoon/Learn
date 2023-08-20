@@ -1024,7 +1024,7 @@ print(plt.show())
 - x축의 간격을 bins 인잣값으로 조정 가능
 - set_xlabel, set_ylabel 축들의 이름을 정할 수 있다.
 
-### 산점도 그래프
+### 산점도 그래프 (이변량)
 
 - 이변량
     
@@ -1089,6 +1089,363 @@ tips 데이터프레임에서 성별이 female인 데이터와 male인 데이터
 
 ---
 
-## 다변량 그래프 그리기
+### 산점도 그래프 (다변량)
 
 3개 이상의 변수를 사용함.
+
+recode_sex 함수를 브로드캐스팅 하기 위해 apply 메서드를 사용
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+def recode_sex(sex):
+    if sex == 'Female':
+        return 0
+    elif sex == 'Male':
+        return 1
+# 함수를 써서 값을 변수를 추가함
+
+tips = sns.load_dataset('tips')
+tips['sex_color'] = tips['sex'].apply(recode_sex)
+
+scatter_plot = plt.figure()
+axes1 = scatter_plot.add_subplot(1, 1, 1)
+axes1.scatter(
+    x = tips['total_bill'],
+    y = tips['tip'],
+    s = tips['size'] * 10,
+    c = tips['sex_color'],
+    alpha = 0.5)
+'''
+s : 점의 크기 size
+c : 색상 color
+alpha : 점의 투명도 
+'''
+
+axes1.set_title('Total Bill vs Tip Colored by Sex and Sized by Size')
+axes1.set_xlabel('Total Bill')
+axes1.set_ylabel('Tip')
+
+print(plt.show())
+```
+
+사진
+
+---
+
+seaborn 라이브러리로 히스토그램을 그리려면
+
+subplot, distplot 메서드를 사용하면 된다.
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+ax = plt.subplots() #  기본 틀 만들기
+ax = sns.distplot(tips['total_bill']) #
+ax.set_title('Total Bill Histogram with Density Plot')
+
+print(plt.show())
+```
+
+사진
+
+- 밀집도 그래프를 제외하고 싶으면 kde =False를 적으면 된다.
+
+```python
+ax = sns.distplot(tips['total_bill'], kde=False)
+```
+
+사진
+
+- 밀집도 그래프만 나타내려면 hist=False를 적으면 된다.
+
+```python
+ax = sns.distplot(tips['total_bill'], hist=False)
+```
+
+사진
+
+- 양탄자(데이터 밀집도)를 표현하려면 rug = True를 적으면 된다.
+
+```python
+ax = sns.distplot(tips['total_bill'], rug=True)
+```
+
+사진
+
+| kde=False | 밀집도 그래프 제외 |
+| --- | --- |
+| hist=False | 밀집도 그래프만 |
+| rug=True | 데이터 밀집도 표현 |
+
+### count 그래프
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+ax = plt.subplots() #  기본 틀 만들기
+
+ax = sns.countplot('day', data=tips) # tips 데이터프레임의 day열 데이터를 넣은 count 그래프
+ax.set_title('Count of days')
+ax.set_xlabel('Day of week')
+ax.set_ylabel('Frequency')
+print(plt.show())
+```
+
+### 다양한 종류의 이변량 그래프
+
+- regplot 메서드 : 산점도 그래프 + 회귀선
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+ax = plt.subplots() #  기본 틀 만들기
+
+ax = sns.regplot(x= 'total_bill', y = 'tip', data = tips)
+ax.set_title('Scatterplot of Total Bill and Tip')
+ax.set_xlabel('Total Bill')
+ax.set_ylabel('Tip')
+print(plt.show())
+```
+
+사진
+
+- 만약 회귀선을 제거 하고 싶다 → fit_reg=False
+
+```python
+ax = sns.regplot(x= 'total_bill', y = 'tip', data = tips, fit_reg=False)
+```
+
+| 그래프 종류 | 설명 |
+| --- | --- |
+| regplot | 산점도+회귀선 그래프 |
+| barplot | 바그래프 |
+| boxplot | 박스그래프 |
+| vilolinplot | 바이올린그래프 |
+
+## 데이터프레임과 시리즈로 그래프 그리기
+
+hist메서드로 시리즈의 값을 이용해 히스토그램 그리기
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+ax = plt.subplots() #  기본 틀 만들기
+
+ax = tips['total_bill'].plot.hist()
+print(plt.show())
+```
+
+사진
+
+### 2개의 시리즈
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips = sns.load_dataset('tips')
+
+fig, ax = plt.subplots() #  기본 틀 만들기
+
+ax = tips[['total_bill', 'tip']].plot.hist(alpha=0.5, bins=20, ax = ax)
+print(plt.show())
+```
+
+사진
+
+| hist | 히스토그램 |
+| --- | --- |
+| kde | 밀집도그래프 |
+| scatter | 산점도그래프 |
+| hexbin | 육각그래프 |
+| box | 박스그래프 |
+- 육각형의 크기 조절 : gridsize=N 인자 추가
+
+# 데이터 연결하기
+
+```python
+import pandas as pd
+
+df1 = pd.read_csv("/Users/sihoon/Downloads/concat_1.csv")
+df2 = pd.read_csv("/Users/sihoon/Downloads/concat_2.csv")
+df3 = pd.read_csv("/Users/sihoon/Downloads/concat_3.csv")
+```
+
+연결할 데이터들을 불러온다.
+
+```python
+row_concat = pd.concat([df1, df2, df3])
+print(row_concat)
+
+'''
+     A    B    C    D
+0   a0   b0   c0   d0
+1   a1   b1   c1   d1
+2   a2   b2   c2   d2
+3   a3   b3   c3   d3
+0   a4   b4   c4   d4
+1   a5   b5   c5   d5
+2   a6   b6   c6   d6
+3   a7   b7   c7   d7
+0   a8   b8   c8   d8
+1   a9   b9   c9   d9
+2  a10  b10  c10  d10
+3  a11  b11  c11  d11
+'''
+```
+
+concat 메서드는 위에서 아래의 방향으로 연결해준다. + 기존 인덱스 값도 유지
+
+기존 인덱스 값을 초기화하려면, ignore_index = True
+
+```python
+print(row_concat.iloc[3, ])
+
+'''
+A    a3
+B    b3
+C    c3
+D    d3
+Name: 3, dtype: object
+'''
+```
+
+iloc를 이용해 네 번째 행을 추출할 수 있다.
+
+## 데이터 프레임에 시리즈 연결하기
+
+```python
+row_concat = pd.concat([df1, df2, df3])
+new_row_series = pd.Series(['n1', 'n2', 'n3', 'n4'])
+print(pd.concat([df1, new_row_series]))
+
+'''
+     A    B    C    D    0
+0   a0   b0   c0   d0  NaN
+1   a1   b1   c1   d1  NaN
+2   a2   b2   c2   d2  NaN
+3   a3   b3   c3   d3  NaN
+0  NaN  NaN  NaN  NaN   n1
+1  NaN  NaN  NaN  NaN   n2
+2  NaN  NaN  NaN  NaN   n3
+3  NaN  NaN  NaN  NaN   n4
+'''
+```
+
+시리즈를 연결하면, 새로운 행이 추가되는 것이 아니라 새로운 열로 추가된다.
+
+### 행 1개로 구성된 데이터프레임 생성하여 연결하기
+
+```python
+row_concat = pd.concat([df1, df2, df3])
+new_row_df = pd.DataFrame([['n1', 'n2', 'n3', 'n4']], columns=['A', 'B', 'C', 'D'])
+print(new_row_df)
+
+'''
+    A   B   C   D
+0  n1  n2  n3  n4
+'''
+```
+
+컬럼을 A, B, C, D로 재정의 해줌으로 D라는 컬럼명이 생긴 것.
+
+```python
+print(pd.concat([df1, new_row_df]))
+
+'''
+    A   B   C   D
+0  a0  b0  c0  d0
+1  a1  b1  c1  d1
+2  a2  b2  c2  d2
+3  a3  b3  c3  d3
+0  n1  n2  n3  n4
+'''
+```
+
+### 로우 인덱스 초기화
+
+위의 설명과 동일. 하지만, 인덱스번호가 깔끔하지 않음. ignore_index = True를 사용해서 깔끔하게 만들~
+
+```python
+print(pd.concat([df1, new_row_df], ignore_index=True))
+
+'''
+    A   B   C   D
+0  a0  b0  c0  d0
+1  a1  b1  c1  d1
+2  a2  b2  c2  d2
+3  a3  b3  c3  d3
+4  n1  n2  n3  n4
+'''
+```
+
+## 열 방향으로 데이터 연결하기
+
+- axis = 1 인자를 사용.
+
+```python
+col_concat = pd.concat([df1, df2, df3], axis = 1)
+print(col_concat)
+
+'''
+    A   B   C   D   A   B   C   D    A    B    C    D
+0  a0  b0  c0  d0  a4  b4  c4  d4   a8   b8   c8   d8
+1  a1  b1  c1  d1  a5  b5  c5  d5   a9   b9   c9   d9
+2  a2  b2  c2  d2  a6  b6  c6  d6  a10  b10  c10  d10
+3  a3  b3  c3  d3  a7  b7  c7  d7  a11  b11  c11  d11
+'''
+```
+
+### 새로운 열 추가
+
+```python
+col_concat = pd.concat([df1, df2, df3], axis = 1)
+col_concat['new_col_list'] = ['n1', 'n2', 'n3', 'n4']
+print(col_concat)
+
+'''
+    A   B   C   D   A   B   C   D    A    B    C    D new_col_list
+0  a0  b0  c0  d0  a4  b4  c4  d4   a8   b8   c8   d8           n1
+1  a1  b1  c1  d1  a5  b5  c5  d5   a9   b9   c9   d9           n2
+2  a2  b2  c2  d2  a6  b6  c6  d6  a10  b10  c10  d10           n3
+3  a3  b3  c3  d3  a7  b7  c7  d7  a11  b11  c11  d11           n4
+'''
+```
+
+### 열 인덱스 초기화
+
+- ignore_index=True
+
+```python
+col_concat = pd.concat([df1, df2, df3], axis = 1, ignore_index=True)
+```
+
+## 공통 열과 공통 인덱스 연결
+
+### 열 방향 연결
+
+- join=’inner’
+
+```python
+print(pd.concat([df1, df2, df3], join='inner'))
+```
+
+### 행 방향 연결
+
+```python
+print(pd.concat([df1, df2, df3], axis = 1, join='inner'))
+```
