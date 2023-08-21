@@ -1449,3 +1449,73 @@ print(pd.concat([df1, df2, df3], join='inner'))
 ```python
 print(pd.concat([df1, df2, df3], axis = 1, join='inner'))
 ```
+
+## merge 메서드
+
+데이터프레임을 왼쪽으로 지정하고, 첫 번째 인잣값으로 지정한 데이터프레임을 오른쪽으로 지정한다. 
+
+left_on과 right_on 인자는 값이 일치해야 할 왼쪽과 오른쪽 데이터프레임의 열을 지정한다.
+
+- 왼쪽 데이터프레임의 열과 오른쪽 데이터프레임의 열의 값이 일치하면 왼쪽 데이터프레임을 기준으로 연결한다.
+
+```python
+변수명 = 데이터프레임.merge(데이터, left_on = '일치하는 열1', right_on = '일치하는 열2')
+```
+
+# 누락값 처리
+
+Numpy
+
+Nan == Nan → False
+
+누락값은 값 자체가 없기 때문에 자기 자신과 비교해도 False이다.→ 비교가 안된다.
+
+### 누락값이 생기는 경우
+
+- **범위를 지정하여 데이터를 추출할 때**
+- **데이터를 입력할 때 없는 열과 행 데이터를 입력하는 경우**
+- **누락값이 포함되어있는 데이터집합을 연결하면 더 많은 누락값이 생긴다**
+
+---
+
+### 누락값이 아닌 개수 구하기
+
+테이블명.count()
+
+### 누락값의 개수 구하기
+
+```python
+import pandas as pd
+
+ebola = pd.read_csv("/Users/sihoon/Downloads/country_timeseries.csv")
+
+numrows = ebola.shape[0]
+num_missing = numrows - ebola.count()
+print(num_missing)
+
+'''
+Date                     0
+Day                      0
+Cases_Guinea            29
+Cases_Liberia           39
+Cases_SierraLeone       35
+Cases_Nigeria           84
+Cases_Senegal           97
+Cases_UnitedStates     104
+Cases_Spain            106
+Cases_Mali             110
+Deaths_Guinea           30
+Deaths_Liberia          41
+Deaths_SierraLeone      35
+Deaths_Nigeria          84
+Deaths_Senegal         100
+Deaths_UnitedStates    104
+Deaths_Spain           106
+Deaths_Mali            110
+dtype: int64
+'''
+```
+
+전체의 열 크기 - count(누락값)
+
+P.145까지함
