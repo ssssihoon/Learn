@@ -1518,4 +1518,511 @@ dtype: int64
 
 전체의 열 크기 - count(누락값)
 
-P.145까지함
+---
+
+**이 메서드를 사용해서 누락값을 구할 수 있다.**
+
+- np.count_nonzero()
+- isnull()
+
+```python
+print(np.count_nonzero(ebola.isnull()))
+print(np.count_nonzero(ebola['Cases_Guinea'].isnull()))
+
+'''
+1214
+29
+'''
+```
+
+---
+
+열의 빈도를 구하는 시리즈에 포함된 메서드를 사용해 누락값 구하기
+
+- value_counts
+
+```python
+print(ebola.Cases_Guinea.value_counts(dropna=False).head())
+
+'''
+Cases_Guinea
+NaN      29
+86.0      3
+495.0     2
+112.0     2
+390.0     2
+Name: count, dtype: int64
+'''
+```
+
+## 누락값 처리하기
+
+### 누락값 변경
+
+- fillna(반환 값)
+
+```python
+print(ebola.fillna(0).iloc[0:10, 0:5])
+
+'''
+Date  Day  Cases_Guinea  Cases_Liberia  Cases_SierraLeone
+0    1/5/2015  289        2776.0            0.0            10030.0
+1    1/4/2015  288        2775.0            0.0             9780.0
+2    1/3/2015  287        2769.0         8166.0             9722.0
+3    1/2/2015  286           0.0         8157.0                0.0
+4  12/31/2014  284        2730.0         8115.0             9633.0
+
+'''
+누락값을 0.0으로 변경하였다.
+```
+
+- ffill
+- bfill
+- interporlate()
+
+```python
+print(ebola.fillna(method='ffill').iloc[0:10, 0:5].head())
+print(ebola.fillna(method='bfill').iloc[0:10, 0:5].head())
+print(ebola.interpolate().iloc[0:10, 0:5].head())
+
+''' ffill의 값
+         Date  Day  Cases_Guinea  Cases_Liberia  Cases_SierraLeone
+0    1/5/2015  289        2776.0            NaN            10030.0
+1    1/4/2015  288        2775.0            NaN             9780.0
+2    1/3/2015  287        2769.0         8166.0             9722.0
+3    1/2/2015  286        2769.0         8157.0             9722.0
+4  12/31/2014  284        2730.0         8115.0             9633.0
+
+NaN값은 처음부터 누락값이기 때문에 그대로
+'''
+
+''' bfill의 값
+         Date  Day  Cases_Guinea  Cases_Liberia  Cases_SierraLeone
+0    1/5/2015  289        2776.0         8166.0            10030.0
+1    1/4/2015  288        2775.0         8166.0             9780.0
+2    1/3/2015  287        2769.0         8166.0             9722.0
+3    1/2/2015  286        2730.0         8157.0             9633.0
+4  12/31/2014  284        2730.0         8115.0             9633.0
+'''
+```
+
+ffill의 경우 누락값이 나타나기 전으로 변경
+
+bfill의 경우 누락값이 나타난 이후의 첫번째 값으로 변경
+
+interpolate의 경우 ffill과 bfill의 중간값으로 처리
+
+### 누락값 삭제하기
+
+- dropna()
+
+```python
+ebola_dropna = ebola.dropna()
+print(ebola_dropna.head())
+
+'''
+          Date  Day  ...  Deaths_Spain  Deaths_Mali
+19  11/18/2014  241  ...           0.0          6.0
+
+[1 rows x 18 columns]
+'''
+```
+
+### 누락값을 무시한 채 계산하기
+
+skipna=True
+
+```python
+print(ebola.Cases_Guinea.sum(skipna = True))
+```
+
+# 깔끔한 데이터
+
+melt 메서드는 깔끔한 데이터로 정리하는데 유용하다.
+
+| 메서드 | 설명 |
+| --- | --- |
+| id_vars | 위치를 그대로 유지할 열의 이름을 지정 |
+| value_vars | 행으로 위치를 변경할 열의 이름을 지정 |
+| var_nam | value_vars로 위치를 변경할 열의 이름을 지정 |
+| value_name | var_name으로 위치를 변경할 열의 데이터를 저장한 열의 이름을 지정 |
+
+## 열과 피벗
+
+df
+
+```python
+import numpy as np
+import pandas as pd
+
+pew = pd.read_csv("/Users/sihoon/Downloads/pew.csv")
+print(pew.head())
+
+'''
+             religion  <$10k  $10-20k  ...  $100-150k  >150k  Don't know/refused
+0            Agnostic     27       34  ...        109     84                  96
+1             Atheist     12       27  ...         59     74                  76
+2            Buddhist     27       21  ...         39     53                  54
+3            Catholic    418      617  ...        792    633                1489
+4  Don’t know/refused     15       14  ...         17     18                 116
+
+[5 rows x 11 columns]
+'''
+```
+
+### melt 메서드
+
+### 1개의 열만 고정하고 나머지 열을 행으로 바꾸기
+
+- 우선 6개의 열만 출력해보기
+
+```python
+print(pew.iloc[:, 0:6])
+
+'''
+                   religion  <$10k  $10-20k  $20-30k  $30-40k  $40-50k
+0                  Agnostic     27       34       60       81       76
+1                   Atheist     12       27       37       52       35
+2                  Buddhist     27       21       30       34       33
+3                  Catholic    418      617      732      670      638
+4        Don’t know/refused     15       14       15       11       10
+5          Evangelical Prot    575      869     1064      982      881
+'''
+```
+
+- 이제 소득정보 열을 행 데이터로 옮겨보기
+
+```python
+pew_long = pd.melt(pew, id_vars='religion')
+print(pew_long.head())
+
+             religion variable  value
+0            Agnostic    <$10k     27
+1             Atheist    <$10k     12
+2            Buddhist    <$10k     27
+3            Catholic    <$10k    418
+4  Don’t know/refused    <$10k     15
+
+```
+
+열을 제외한 나머지 소득 정보 열이 variable 열로 정리되고, 소득 정보 열의 데이터도 value 열로 정리되었다. 이를 ********피벗******** 이라고 한다.
+
+이제
+
+- 이를 variable, value 열 이름 바꾸기
+
+```python
+pew_long = pd.melt(pew, id_vars='religion', var_name='income', value_name='count')
+print(pew_long.head())
+
+'''
+             religion income  count
+0            Agnostic  <$10k     27
+1             Atheist  <$10k     12
+2            Buddhist  <$10k     27
+3            Catholic  <$10k    418
+4  Don’t know/refused  <$10k     15
+'''
+```
+
+### 2개 이상의 열을 고정하고 나머지 열을 행으로 바꾸기
+
+df
+
+```python
+billboard = pd.read_csv("/Users/sihoon/Downloads/billboard.csv")
+print(billboard.head())
+
+'''
+   year        artist                    track  time  ... wk73  wk74  wk75  wk76
+0  2000         2 Pac  Baby Don't Cry (Keep...  4:22  ...  NaN   NaN   NaN   NaN
+1  2000       2Ge+her  The Hardest Part Of ...  3:15  ...  NaN   NaN   NaN   NaN
+2  2000  3 Doors Down               Kryptonite  3:53  ...  NaN   NaN   NaN   NaN
+3  2000  3 Doors Down                    Loser  4:24  ...  NaN   NaN   NaN   NaN
+4  2000      504 Boyz            Wobble Wobble  3:35  ...  NaN   NaN   NaN   NaN
+
+[5 rows x 81 columns]
+'''
+```
+
+- year, artist, track, time, date.entered 열을 모두 고정하고 나머지 열을 피벗하기
+
+```python
+billboard = pd.read_csv("/Users/sihoon/Downloads/billboard.csv")
+billboard_long = pd.melt(billboard, id_vars=['year', 'artist', 'track', 'time', 'date.entered'], var_name='week', value_name='rating')
+print(billboard_long.head())
+
+'''
+   year        artist                    track  time date.entered week  rating
+0  2000         2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk1    87.0
+1  2000       2Ge+her  The Hardest Part Of ...  3:15   2000-09-02  wk1    91.0
+2  2000  3 Doors Down               Kryptonite  3:53   2000-04-08  wk1    81.0
+3  2000  3 Doors Down                    Loser  4:24   2000-10-21  wk1    76.0
+4  2000      504 Boyz            Wobble Wobble  3:35   2000-04-15  wk1    57.0
+'''
+```
+
+## 열 이름 관리하기
+
+df
+
+```python
+evola = pd.read_csv("/Users/sihoon/Downloads/country_timeseries.csv")
+print(evola.columns)
+
+'''
+Index(['Date', 'Day', 'Cases_Guinea', 'Cases_Liberia', 'Cases_SierraLeone',
+       'Cases_Nigeria', 'Cases_Senegal', 'Cases_UnitedStates', 'Cases_Spain',
+       'Cases_Mali', 'Deaths_Guinea', 'Deaths_Liberia', 'Deaths_SierraLeone',
+       'Deaths_Nigeria', 'Deaths_Senegal', 'Deaths_UnitedStates',
+       'Deaths_Spain', 'Deaths_Mali'],
+      dtype='object')
+'''
+```
+
+- 5개의 데이터만 확인
+
+```python
+print(evola.iloc[:5, [0, 1, 2, 3, 10, 11]])
+
+'''
+         Date  Day  Cases_Guinea  Cases_Liberia  Deaths_Guinea  Deaths_Liberia
+0    1/5/2015  289        2776.0            NaN         1786.0             NaN
+1    1/4/2015  288        2775.0            NaN         1781.0             NaN
+2    1/3/2015  287        2769.0         8166.0         1767.0          3496.0
+3    1/2/2015  286           NaN         8157.0            NaN          3496.0
+4  12/31/2014  284        2730.0         8115.0         1739.0          3471.0
+'''
+```
+
+- Date, Day를 고정 후 나머지를 행으로 피벗
+
+```python
+ebola_long = pd.melt(ebola, id_vars=['Date', 'Day'])
+print(ebola_long)
+
+'''
+Date  Day      variable   value
+0    1/5/2015  289  Cases_Guinea  2776.0
+1    1/4/2015  288  Cases_Guinea  2775.0
+2    1/3/2015  287  Cases_Guinea  2769.0
+3    1/2/2015  286  Cases_Guinea     NaN
+4  12/31/2014  284  Cases_Guinea  2730.0
+'''
+```
+
+- Cases_Guinea 분리하기
+
+```python
+ebola_long = pd.melt(ebola, id_vars=['Date', 'Day'])
+variable_split = ebola_long.variable.str.split('_')
+print(variable_split[:5])
+
+'''
+0    [Cases, Guinea]
+1    [Cases, Guinea]
+2    [Cases, Guinea]
+3    [Cases, Guinea]
+4    [Cases, Guinea]
+Name: variable, dtype: object
+'''
+이 때 variable_split에 추가된 것은 리스트형식이다.
+```
+
+- Cases_Guinea 분리된 것을 데이터프레임에 추가하기
+
+```python
+status_values = variable_split.str.get(0)
+country_values = variable_split.str.get(1)
+ebola_long['status'] = status_values
+ebola_long['country'] = country_values
+
+print(ebola_long.head())
+
+'''
+         Date  Day      variable   value status country
+0    1/5/2015  289  Cases_Guinea  2776.0  Cases  Guinea
+1    1/4/2015  288  Cases_Guinea  2775.0  Cases  Guinea
+2    1/3/2015  287  Cases_Guinea  2769.0  Cases  Guinea
+3    1/2/2015  286  Cases_Guinea     NaN  Cases  Guinea
+4  12/31/2014  284  Cases_Guinea  2730.0  Cases  Guinea
+'''
+```
+
+## 여러 열을 하나로 정리하기
+
+df
+
+```python
+weather = pd.read_csv("/Users/sihoon/Downloads/weather.csv")
+print(weather.iloc[:5, :])
+
+'''
+        id  year  month element  d1    d2  ...  d26  d27  d28  d29   d30  d31
+0  MX17004  2010      1    tmax NaN   NaN  ...  NaN  NaN  NaN  NaN  27.8  NaN
+1  MX17004  2010      1    tmin NaN   NaN  ...  NaN  NaN  NaN  NaN  14.5  NaN
+2  MX17004  2010      2    tmax NaN  27.3  ...  NaN  NaN  NaN  NaN   NaN  NaN
+3  MX17004  2010      2    tmin NaN  14.4  ...  NaN  NaN  NaN  NaN   NaN  NaN
+4  MX17004  2010      3    tmax NaN   NaN  ...  NaN  NaN  NaN  NaN   NaN  NaN
+
+[5 rows x 35 columns]
+'''
+```
+
+- melt로 피벗
+
+```python
+weather_melt = pd.melt(weather, id_vars=['id', 'year', 'month', 'element'], var_name='day', value_name='temp')
+print(weather_melt.head())
+
+'''
+        id  year  month element day  temp
+0  MX17004  2010      1    tmax  d1   NaN
+1  MX17004  2010      1    tmin  d1   NaN
+2  MX17004  2010      2    tmax  d1   NaN
+3  MX17004  2010      2    tmin  d1   NaN
+4  MX17004  2010      3    tmax  d1   NaN
+'''
+```
+
+- pivot_table : 행과 열의 위치를 바꿔준다.
+
+```python
+weather = pd.read_csv("/Users/sihoon/Downloads/weather.csv")
+weather_melt = pd.melt(weather, id_vars=['id', 'year', 'month', 'element'], var_name='day', value_name='temp')
+weather_tidy = weather_melt.pivot_table(
+    index=['id', 'year', 'month', 'day'],
+    columns='element',
+    values='temp'
+)
+print(weather_tidy)
+
+'''
+element                 tmax  tmin
+id      year month day            
+MX17004 2010 1     d30  27.8  14.5
+             2     d11  29.7  13.4
+                   d2   27.3  14.4
+                   d23  29.9  10.7
+                   d3   24.1  14.4
+             3     d10  34.5  16.8
+                   d16  31.1  17.6
+                   d5   32.1  14.2
+             4     d27  36.3  16.7
+             5     d27  33.2  18.2
+             6     d17  28.0  17.5
+                   d29  30.1  18.0
+             7     d3   28.6  17.5
+                   d14  29.9  16.5
+             8     d23  26.4  15.0
+                   d5   29.6  15.8
+                   d29  28.0  15.3
+                   d13  29.8  16.5
+                   d25  29.7  15.6
+                   d31  25.4  15.4
+                   d8   29.0  17.3
+             10    d5   27.0  14.0
+                   d14  29.5  13.0
+                   d15  28.7  10.5
+                   d28  31.2  15.0
+                   d7   28.1  12.9
+             11    d2   31.3  16.3
+                   d5   26.3   7.9
+                   d27  27.7  14.2
+                   d26  28.1  12.1
+                   d4   27.2  12.0
+             12    d1   29.9  13.8
+                   d6   27.8  10.5
+'''
+```
+
+reset_index()를 사용해 새로 인데스를 지정한다.
+
+```python
+weather_tidy_flat = weather_tidy.reset_index()
+print(weather_tidy_flat.head())
+
+'''
+element       id  year  month  day  tmax  tmin
+0        MX17004  2010      1  d30  27.8  14.5
+1        MX17004  2010      2  d11  29.7  13.4
+2        MX17004  2010      2   d2  27.3  14.4
+3        MX17004  2010      2  d23  29.9  10.7
+4        MX17004  2010      2   d3  24.1  14.4
+'''
+```
+
+## 중복 데이터 처리하기
+
+df
+
+```python
+billboard = pd.read_csv("/Users/sihoon/Downloads/billboard.csv")
+billboard_long = pd.melt(billboard, id_vars=['year', 'artist', 'track', 'time', 'date.entered'],
+                         var_name='week', value_name='rating')
+print(billboard_long.head())
+
+'''
+   year        artist                    track  time date.entered week  rating
+0  2000         2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk1    87.0
+1  2000       2Ge+her  The Hardest Part Of ...  3:15   2000-09-02  wk1    91.0
+2  2000  3 Doors Down               Kryptonite  3:53   2000-04-08  wk1    81.0
+3  2000  3 Doors Down                    Loser  4:24   2000-10-21  wk1    76.0
+4  2000      504 Boyz            Wobble Wobble  3:35   2000-04-15  wk1    57.0
+'''
+```
+
+노래(track)에 관해 중복성을 띄는 것이 몇몇 있는데, 이를 처리해줘야한다.
+
+현재 중복 데이터의 열은 year, artist, track, time, date이다.
+
+- 이 열들을 다른 데이터프레임에 따로 저장시켜줘야한다. → billboard_song에 저장시키기
+- drop_duplicates()를 사용해 중복 제거
+
+```python
+billboard_song = billboard_long[['year', 'artist', 'track', 'time']]
+billboard_song = billboard_song.drop_duplicates()
+print(billboard_song.head())
+
+'''
+   year        artist                    track  time
+0  2000         2 Pac  Baby Don't Cry (Keep...  4:22
+1  2000       2Ge+her  The Hardest Part Of ...  3:15
+2  2000  3 Doors Down               Kryptonite  3:53
+3  2000  3 Doors Down                    Loser  4:24
+4  2000      504 Boyz            Wobble Wobble  3:35
+'''
+```
+
+- 중복을 제거한 데이터프레임에 id도 추가
+
+```python
+billboard_song['id'] = range(len(billboard_song))
+print(billboard_song.head())
+
+'''
+   year        artist                    track  time  id
+0  2000         2 Pac  Baby Don't Cry (Keep...  4:22   0
+1  2000       2Ge+her  The Hardest Part Of ...  3:15   1
+2  2000  3 Doors Down               Kryptonite  3:53   2
+3  2000  3 Doors Down                    Loser  4:24   3
+4  2000      504 Boyz            Wobble Wobble  3:35   4
+'''
+```
+
+- merge메서드를 사용해 노래 정보와 주간 순위 데이터를 합치기
+
+```python
+billboard_ratings = billboard_long.merge(billboard_song, on=['year', 'artist'
+                                                             , 'track', 'time'])
+print(billboard_ratings.head())
+
+'''
+   year artist                    track  time date.entered week  rating  id
+0  2000  2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk1    87.0   0
+1  2000  2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk2    82.0   0
+2  2000  2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk3    72.0   0
+3  2000  2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk4    77.0   0
+4  2000  2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk5    87.0   0
+'''
+```
