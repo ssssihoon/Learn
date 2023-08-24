@@ -2026,3 +2026,545 @@ print(billboard_ratings.head())
 4  2000  2 Pac  Baby Don't Cry (Keep...  4:22   2000-02-26  wk5    87.0   0
 '''
 ```
+
+# 판다스 자료형
+
+df
+
+```python
+import pandas as pd
+import seaborn as sns
+
+tips = sns.load_dataset("tips")
+
+print(tips.head())
+
+'''
+   total_bill   tip     sex smoker  day    time  size
+0       16.99  1.01  Female     No  Sun  Dinner     2
+1       10.34  1.66    Male     No  Sun  Dinner     3
+2       21.01  3.50    Male     No  Sun  Dinner     3
+3       23.68  3.31    Male     No  Sun  Dinner     2
+4       24.59  3.61  Female     No  Sun  Dinner     4
+'''
+```
+
+## 자료형을 문자열로 변환하기
+
+- astype()
+
+```python
+tips['sex_str'] = tips['sex'].astype(str)
+
+-> astype 메서드를 사용해 sex열의 데이터를 문자열로 변환하여 sex_str로 저장
+```
+
+```python
+print(tips.dtypes)
+
+'''
+total_bill     float64
+tip            float64
+sex           category
+smoker        category
+day           category
+time          category
+size             int64
+sex_str         object
+dtype: object
+'''
+-> object는 파다스에서 문자열이다.
+```
+
+---
+
+tatal_bill의 자료형(float)를 문자열로 만들기
+
+```python
+tips['total_bill'] = tips['total_bill'].astype(str)
+```
+
+다시 실수형으로 만들기
+
+```python
+tips['total_bill'] = tips['total_bill'].astype(float)
+```
+
+### 잘못 입력한 문자열 처리하기
+
+- to_numeric
+
+total_bill 열의 1, 3, 5, 7 행의 데이터를 missing으로 바꾼 후 변수 tips_sub_miss로 저장한 것
+
+```python
+tips_sub_miss = tips.head(10)
+tips_sub_miss.loc[[1, 3, 5, 7], 'total_bill'] = 'missing'
+print(tips_sub_miss)
+
+'''
+  total_bill   tip     sex smoker  day    time  size sex_str
+0      16.99  1.01  Female     No  Sun  Dinner     2  Female
+1    missing  1.66    Male     No  Sun  Dinner     3    Male
+2      21.01  3.50    Male     No  Sun  Dinner     3    Male
+3    missing  3.31    Male     No  Sun  Dinner     2    Male
+4      24.59  3.61  Female     No  Sun  Dinner     4  Female
+5    missing  4.71    Male     No  Sun  Dinner     4    Male
+'''
+```
+
+```python
+print(tips_sub_miss.dtypes)
+'''
+total_bill      object
+tip            float64
+sex           category
+smoker        category
+day           category
+time          category
+size             int64
+sex_str         object
+dtype: object
+'''
+total_bill의 타입이 문자열로 바껴있다.
+이는 missing때문이다.
+판다스는 missing이 문자열을 실수로 변환하는 방법을 모른다
+이를 to_numeric 메서드를 사용해 해결하려 해도 에러가 발생한다.
+에러를 무시하는 errors=ignore을 써도 문자열이다.
+
+-> 이를 해결하기 위해 errors=coerce를 쓴다.
+coerce : 억압하다, 강요하다.
+```
+
+```python
+tips_sub_miss['total_bill'] = pd.to_numeric(tips_sub_miss['total_bill'], errors='coerce')
+print(tips_sub_miss.dtypes)
+
+'''
+total_bill     float64
+tip            float64
+sex           category
+smoker        category
+day           category
+time          category
+size             int64
+sex_str         object
+dtype: object
+'''
+```
+
+- 다운캐스트 : 자료형을 더 작은 형태로 만든다
+
+예상 범위가 크지 않게 하려면 다운캐스트를 하는 것이 좋다.
+
+→ 메모리 공간 차지를 덜 한다.
+
+```python
+tips_sub_miss['total_bill'] = pd.to_numeric(tips_sub_miss['total_bill'], errors='coerce', downcast = 'float')
+print(tips_sub_miss.dtypes)
+
+'''
+total_bill     **float32**
+tip            float64
+sex           category
+smoker        category
+day           category
+time          category
+size             int64
+sex_str         object
+dtype: object
+'''
+```
+
+## 카테고리 자료형
+
+### 문자열을 카테고리로 변환하기
+
+- .astype(’category’)
+
+# apply 메서드 활용
+
+df
+
+```python
+import pandas as pd
+
+df = pd.DataFrame({'a' : [10, 20, 30], 'b' : [20, 30, 40]})
+print(df)
+
+'''
+    a   b
+0  10  20
+1  20  30
+2  30  40
+'''
+```
+
+제곱 값 만들기
+
+```python
+print(df['a'] ** 2)
+
+'''
+0    100
+1    400
+2    900
+Name: a, dtype: int64
+'''
+```
+
+- apply함수를 사용해 평균 값 구하기
+
+```python
+df = pd.DataFrame({'a' : [10, 20, 30], 'b' : [20, 30, 40]})
+df = df.apply(np.mean, axis=1)
+print(df)
+
+'''
+0    15.0
+1    25.0
+2    35.0
+dtype: float64
+
+'''
+
+axis = 1 인자를 사용해 행 별로 평균값을 구했다.
+axis = 0 -> 열 방향으로 함수 적용
+```
+
+함수를 사용할 때도 쓰인다.
+
+- df.apply(함수)
+
+## 데이터프레임의 누락값을 처리한 후 apply 메서드 사용하기
+
+df
+
+```python
+titanic = sns.load_dataset("titanic")
+print(titanic.info)
+
+'''
+<bound method DataFrame.info of      survived  pclass     sex   age  ...  deck  embark_town  alive  alone
+0           0       3    male  22.0  ...   NaN  Southampton     no  False
+1           1       1  female  38.0  ...     C    Cherbourg    yes  False
+2           1       3  female  26.0  ...   NaN  Southampton    yes   True
+3           1       1  female  35.0  ...     C  Southampton    yes  False
+4           0       3    male  35.0  ...   NaN  Southampton     no   True
+..        ...     ...     ...   ...  ...   ...          ...    ...    ...
+886         0       2    male  27.0  ...   NaN  Southampton     no   True
+887         1       1  female  19.0  ...     B  Southampton    yes   True
+888         0       3  female   NaN  ...   NaN  Southampton     no  False
+889         1       1    male  26.0  ...     C    Cherbourg    yes   True
+890         0       3    male  32.0  ...   NaN   Queenstown     no   True
+
+[891 rows x 15 columns]>
+'''
+```
+
+### 누락값의 개수를 반환하는 count_missing 함수만들기
+
+```python
+def count_missing(vec):
+    null_vec = pd.isnull(vec)
+    null_count = np.sum(null_vec)
+    return null_count
+```
+
+개수 구하기
+
+```python
+cmis_col = titanic.apply(count_missing)
+print(cmis_col)
+
+'''
+survived         0
+pclass           0
+sex              0
+age            177
+sibsp            0
+parch            0
+fare             0
+embarked         2
+class            0
+who              0
+adult_male       0
+deck           688
+embark_town      2
+alive            0
+alone            0
+dtype: int64
+'''
+```
+
+# 데이터 집계
+
+## GROUPBY
+
+df
+
+```python
+import pandas as pd
+df = pd.read_csv("/Users/sihoon/Desktop/Pandas/gapminder.tsv", sep='\t')
+print(df.head())
+
+'''
+       country continent  year  lifeExp       pop   gdpPercap
+0  Afghanistan      Asia  1952   28.801   8425333  779.445314
+1  Afghanistan      Asia  1957   30.332   9240934  820.853030
+2  Afghanistan      Asia  1962   31.997  10267083  853.100710
+3  Afghanistan      Asia  1967   34.020  11537966  836.197138
+4  Afghanistan      Asia  1972   36.088  13079460  739.981106
+'''
+```
+
+## year 열을 기준으로 데이터를 그룹화한 다음 lifeExp 열의 평균을 구하기
+
+```python
+avg_life_exp_by_year = df.groupby('year').lifeExp.mean()
+print(avg_life_exp_by_year.head())
+
+'''
+year
+1952    49.057620
+1957    51.507401
+1962    53.609249
+1967    55.678290
+1972    57.647386
+Name: lifeExp, dtype: float64
+'''
+```
+
+### 1. 분할
+
+데이터를 중복없이 추출하기
+
+```python
+years = df.year.unique()
+print(years)
+
+'''
+[1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007]
+'''
+```
+
+### 2. 반영
+
+연도별 평균값 구하기
+
+예시
+
+```python
+y1952 = df.loc[df.year == 1952, :]
+print(y1952.head())
+
+'''
+        country continent  year  lifeExp       pop    gdpPercap
+0   Afghanistan      Asia  1952   28.801   8425333   779.445314
+12      Albania    Europe  1952   55.230   1282697  1601.056136
+24      Algeria    Africa  1952   43.077   9279525  2449.008185
+36       Angola    Africa  1952   30.015   4232095  3520.610273
+48    Argentina  Americas  1952   62.485  17876956  5911.315053
+
+'''
+```
+
+lifeExp의 평균값 구하기
+
+```python
+y1952_mean = y1952.lifeExp.mean()
+print(y1952_mean)
+'''
+49.057619718309866
+'''
+```
+
+이 작업을 반복해서 모든 연도의 평균값을 구하면 그것이 ‘반영’ 작업이 끝난 것이다.
+
+### 3. 결합
+
+연도별로 계산한 lifeExp의 평균값을 합치면 그것이 결합 작업이다.
+
+```python
+df2 = pd.DataFrame({'year' : [1952, ''''], "" :[y1952_mean, '''']})
+print(df2)
+```
+
+### agg 메서드
+
+직접 함수를 만들어서 사용할 때, groupby 와 함수를 조합하려면 agg 메서드를 이용한다.
+
+- 평균값을 구하는 함수
+
+```python
+def my_mean(values):
+    n = len(values)
+    sum = 0
+    for value in values:
+        sum += value
+        
+    return sum / n
+```
+
+이 함수와 groupby 를 조합하려면
+
+agg
+
+```python
+agg_my_mean = df.groupby('year').lifeExp.agg(my_mean)
+print(agg_my_mean)
+
+'''
+year
+1952    49.057620
+1957    51.507401
+1962    53.609249
+1967    55.678290
+1972    57.647386
+1977    59.570157
+1982    61.533197
+1987    63.212613
+1992    64.160338
+1997    65.014676
+2002    65.694923
+2007    67.007423
+Name: lifeExp, dtype: float64
+'''
+```
+
+## 데이터 필터링
+
+df
+
+```python
+tips = sns.load_dataset('tips')
+print(tips['size'].value_counts())
+
+'''
+size
+2    156
+3     38
+4     37
+5      5
+1      4
+6      4
+Name: count, dtype: int64
+'''
+```
+
+현재 상황은 1, 5, 6테이블의 주문이 매우 적다.
+
+이 데이터를 제외하려 하는데, 
+
+30번 이상의 주문이 있는 테이블 만 필터링하려면
+
+```python
+tips_filtered = tips.\
+    groupby('size').\
+    filter(lambda x: x['size'].count() >= 30)
+print(tips_filtered['size'].value_counts())
+
+'''
+size
+2    156
+3     38
+4     37
+Name: count, dtype: int64
+'''
+```
+
+## 그룹 오브젝트
+
+df
+
+```python
+tips = sns.load_dataset('tips')
+print(tips.head())
+
+'''
+   total_bill   tip     sex smoker  day    time  size
+0       16.99  1.01  Female     No  Sun  Dinner     2
+1       10.34  1.66    Male     No  Sun  Dinner     3
+2       21.01  3.50    Male     No  Sun  Dinner     3
+3       23.68  3.31    Male     No  Sun  Dinner     2
+4       24.59  3.61  Female     No  Sun  Dinner     4
+
+'''
+```
+
+파이썬에서 모든 열을 계산하려 하면, object 형으로 되어있는 데이터 때문에 계산이 안 될 것 같지만 실제로는 문자열을 제외하고 실수형들을 계산해준다.
+
+```python
+sex_grouped = tips.groupby('sex')
+print(sex_grouped)
+
+'''
+<pandas.core.groupby.generic.DataFrameGroupBy object at 0x126a51c50>
+'''
+```
+
+### 특정 데이터만 추출하기
+
+- 여성만 추출하기
+
+```python
+female = sex_grouped.get_group('Female')
+print(female)
+
+'''
+     total_bill   tip     sex smoker   day    time  size
+0         16.99  1.01  Female     No   Sun  Dinner     2
+4         24.59  3.61  Female     No   Sun  Dinner     4
+11        35.26  5.00  Female     No   Sun  Dinner     4
+14        14.83  3.02  Female     No   Sun  Dinner     2
+16        10.33  1.67  Female     No   Sun  Dinner     3
+..          ...   ...     ...    ...   ...     ...   ...
+226       10.09  2.00  Female    Yes   Fri   Lunch     2
+229       22.12  2.88  Female    Yes   Sat  Dinner     2
+238       35.83  4.67  Female     No   Sat  Dinner     3
+240       27.18  2.00  Female    Yes   Sat  Dinner     2
+243       18.78  3.00  Female     No  Thur  Dinner     2
+
+[87 rows x 7 columns]
+
+'''
+```
+
+- 모든 성별 반복문으로 추출하기
+
+```python
+for sex_group in sex_grouped:
+    print(sex_group)
+
+'''
+('Male',      total_bill   tip   sex smoker  day    time  size
+1         10.34  1.66  Male     No  Sun  Dinner     3
+2         21.01  3.50  Male     No  Sun  Dinner     3
+3         23.68  3.31  Male     No  Sun  Dinner     2
+5         25.29  4.71  Male     No  Sun  Dinner     4
+6          8.77  2.00  Male     No  Sun  Dinner     2
+..          ...   ...   ...    ...  ...     ...   ...
+236       12.60  1.00  Male    Yes  Sat  Dinner     2
+237       32.83  1.17  Male    Yes  Sat  Dinner     2
+239       29.03  5.92  Male     No  Sat  Dinner     3
+241       22.67  2.00  Male    Yes  Sat  Dinner     2
+242       17.82  1.75  Male     No  Sat  Dinner     2
+
+[157 rows x 7 columns])
+('Female',      total_bill   tip     sex smoker   day    time  size
+0         16.99  1.01  Female     No   Sun  Dinner     2
+4         24.59  3.61  Female     No   Sun  Dinner     4
+11        35.26  5.00  Female     No   Sun  Dinner     4
+14        14.83  3.02  Female     No   Sun  Dinner     2
+16        10.33  1.67  Female     No   Sun  Dinner     3
+..          ...   ...     ...    ...   ...     ...   ...
+226       10.09  2.00  Female    Yes   Fri   Lunch     2
+229       22.12  2.88  Female    Yes   Sat  Dinner     2
+238       35.83  4.67  Female     No   Sat  Dinner     3
+240       27.18  2.00  Female    Yes   Sat  Dinner     2
+243       18.78  3.00  Female     No  Thur  Dinner     2
+
+[87 rows x 7 columns])
+'''
+```
+
+# 시계열 데이터
