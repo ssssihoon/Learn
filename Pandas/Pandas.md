@@ -1,3 +1,107 @@
+- [Pandas](#pandas)
+- [데이터 집합 불러오기](#데이터-집합-불러오기)
+  - [시리즈와 데이터프레임](#시리즈와-데이터프레임)
+  - [판다스 자료형](#판다스-자료형)
+- [데이터 추출하기](#데이터-추출하기)
+  - [열 단위 추출](#열-단위-추출)
+  - [행 단위 추출](#행-단위-추출)
+    - [loc 속성으로 행 데이터 추출하기](#loc-속성으로-행-데이터-추출하기)
+    - [iloc 속성으로 행 데이터 추출하기](#iloc-속성으로-행-데이터-추출하기)
+    - [슬라이싱 구문으로 데이터 추출하기](#슬라이싱-구문으로-데이터-추출하기)
+    - [range 메서드로 데이터 추출하기](#range-메서드로-데이터-추출하기)
+  - [기초적인 통계 계산하기](#기초적인-통계-계산하기)
+    - [그룹화한 데이터 개수 세기](#그룹화한-데이터-개수-세기)
+  - [데이터 그리기](#데이터-그리기)
+- [데이터프레임과 시리즈](#데이터프레임과-시리즈)
+  - [데이터 만들기](#데이터-만들기)
+    - [시리즈 만들기](#시리즈-만들기)
+    - [데이터프레임 만들기](#데이터프레임-만들기)
+  - [시리즈 다루기](#시리즈-다루기)
+    - [시리즈 선택](#시리즈-선택)
+    - [index, value, keys](#index-value-keys)
+  - [시리즈 불린 추출](#시리즈-불린-추출)
+  - [시리즈와 브로드캐스팅](#시리즈와-브로드캐스팅)
+    - [sort\_index 메서드](#sort_index-메서드)
+  - [데이터프레임 다루기](#데이터프레임-다루기)
+    - [불린 추출](#불린-추출)
+  - [시리즈, 데이터프레임 데이터 처리](#시리즈-데이터프레임-데이터-처리)
+    - [데이터 섞기](#데이터-섞기)
+    - [데이터프레임 열 삭제](#데이터프레임-열-삭제)
+  - [데이터 저장, 불러오기](#데이터-저장-불러오기)
+    - [피클 저장](#피클-저장)
+    - [csv, tsv](#csv-tsv)
+- [그래프 그리기](#그래프-그리기)
+  - [matplotlib 라이브러리로 그래프 그리기](#matplotlib-라이브러리로-그래프-그리기)
+  - [seaborn 데이터 불러오기](#seaborn-데이터-불러오기)
+    - [seaborn 데이터의 앤스콤 데이터](#seaborn-데이터의-앤스콤-데이터)
+    - [matplotlib로 그래프 그리기](#matplotlib로-그래프-그리기)
+    - [앤스콤 데이터 집합 모두 사용해 그래프 만들기](#앤스콤-데이터-집합-모두-사용해-그래프-만들기)
+    - [제목 추가](#제목-추가)
+    - [레이아웃 조절](#레이아웃-조절)
+    - [히스토그램 hist](#히스토그램-hist)
+    - [산점도 그래프 (이변량)](#산점도-그래프-이변량)
+    - [박스 그래프](#박스-그래프)
+    - [산점도 그래프 (다변량)](#산점도-그래프-다변량)
+    - [count 그래프](#count-그래프)
+    - [다양한 종류의 이변량 그래프](#다양한-종류의-이변량-그래프)
+  - [데이터프레임과 시리즈로 그래프 그리기](#데이터프레임과-시리즈로-그래프-그리기)
+    - [2개의 시리즈](#2개의-시리즈)
+- [데이터 연결하기](#데이터-연결하기)
+  - [데이터 프레임에 시리즈 연결하기](#데이터-프레임에-시리즈-연결하기)
+    - [행 1개로 구성된 데이터프레임 생성하여 연결하기](#행-1개로-구성된-데이터프레임-생성하여-연결하기)
+    - [로우 인덱스 초기화](#로우-인덱스-초기화)
+  - [열 방향으로 데이터 연결하기](#열-방향으로-데이터-연결하기)
+    - [새로운 열 추가](#새로운-열-추가)
+    - [열 인덱스 초기화](#열-인덱스-초기화)
+  - [공통 열과 공통 인덱스 연결](#공통-열과-공통-인덱스-연결)
+    - [열 방향 연결](#열-방향-연결)
+    - [행 방향 연결](#행-방향-연결)
+  - [merge 메서드](#merge-메서드)
+- [누락값 처리](#누락값-처리)
+    - [누락값이 생기는 경우](#누락값이-생기는-경우)
+    - [누락값이 아닌 개수 구하기](#누락값이-아닌-개수-구하기)
+    - [누락값의 개수 구하기](#누락값의-개수-구하기)
+  - [누락값 처리하기](#누락값-처리하기)
+    - [누락값 변경](#누락값-변경)
+    - [누락값 삭제하기](#누락값-삭제하기)
+    - [누락값을 무시한 채 계산하기](#누락값을-무시한-채-계산하기)
+- [깔끔한 데이터](#깔끔한-데이터)
+  - [열과 피벗](#열과-피벗)
+    - [melt 메서드](#melt-메서드)
+    - [1개의 열만 고정하고 나머지 열을 행으로 바꾸기](#1개의-열만-고정하고-나머지-열을-행으로-바꾸기)
+    - [2개 이상의 열을 고정하고 나머지 열을 행으로 바꾸기](#2개-이상의-열을-고정하고-나머지-열을-행으로-바꾸기)
+  - [열 이름 관리하기](#열-이름-관리하기)
+  - [여러 열을 하나로 정리하기](#여러-열을-하나로-정리하기)
+  - [중복 데이터 처리하기](#중복-데이터-처리하기)
+- [판다스 자료형](#판다스-자료형-1)
+  - [자료형을 문자열로 변환하기](#자료형을-문자열로-변환하기)
+    - [잘못 입력한 문자열 처리하기](#잘못-입력한-문자열-처리하기)
+  - [카테고리 자료형](#카테고리-자료형)
+    - [문자열을 카테고리로 변환하기](#문자열을-카테고리로-변환하기)
+- [apply 메서드 활용](#apply-메서드-활용)
+  - [데이터프레임의 누락값을 처리한 후 apply 메서드 사용하기](#데이터프레임의-누락값을-처리한-후-apply-메서드-사용하기)
+    - [누락값의 개수를 반환하는 count\_missing 함수만들기](#누락값의-개수를-반환하는-count_missing-함수만들기)
+- [데이터 집계](#데이터-집계)
+  - [GROUPBY](#groupby)
+  - [year 열을 기준으로 데이터를 그룹화한 다음 lifeExp 열의 평균을 구하기](#year-열을-기준으로-데이터를-그룹화한-다음-lifeexp-열의-평균을-구하기)
+    - [1. 분할](#1-분할)
+    - [2. 반영](#2-반영)
+    - [3. 결합](#3-결합)
+    - [agg 메서드](#agg-메서드)
+  - [데이터 필터링](#데이터-필터링)
+  - [그룹 오브젝트](#그룹-오브젝트)
+    - [특정 데이터만 추출하기](#특정-데이터만-추출하기)
+- [시계열 데이터](#시계열-데이터)
+  - [datetime 오브젝트로 변환하기](#datetime-오브젝트로-변환하기)
+    - [문자열을 datetime 오브젝트로 변환하기](#문자열을-datetime-오브젝트로-변환하기)
+    - [시계열 데이터를 구분해서 추출](#시계열-데이터를-구분해서-추출)
+  - [read\_csv에서 datetime 오브젝트로 변환하기](#read_csv에서-datetime-오브젝트로-변환하기)
+  - [datetime 오브젝트에서 날짜 정보 추출하기](#datetime-오브젝트에서-날짜-정보-추출하기)
+    - [dt접근자](#dt접근자)
+  - [사례별 시계열 데이터 계산하기](#사례별-시계열-데이터-계산하기)
+    - [시간 범위와 인덱스](#시간-범위와-인덱스)
+
+
 # Pandas
 
 # 데이터 집합 불러오기
@@ -883,11 +987,13 @@ print(plt.show())
 # 이 중 x와 y 값을 축으로 사용해 그래프를 출력
 ```
 
-사진
+![iShot_2023-08-19_17 48 45](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/9430546f-0841-4f0b-bb7b-e682efd4e24a)
+
 
 - x축, y축, ‘o’ : 세 번째 인자를 ‘o’를 사용해 점으로 나타낼 수 있다.
 
-사진
+![iShot_2023-08-19_17 51 31](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/ec8c788d-6ac4-4ecd-8ec8-25080713ff08)
+
 
 ### 앤스콤 데이터 집합 모두 사용해 그래프 만들기
 
@@ -929,7 +1035,8 @@ fig
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-19_18 16 25](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/4cdd27bc-b11e-42ab-9dc7-0c1ee2397903)
+
 
 ### 제목 추가
 
@@ -996,7 +1103,8 @@ axes1 = fig.add_subplot(1, 1, 1)
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-19_19 07 32](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/9bbe007f-6b59-41e2-b21c-41925e08da13)
+
 
 ### 히스토그램 hist
 
@@ -1019,7 +1127,8 @@ fig
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-19_19 57 05](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/e65bce10-f92e-428b-835f-d565b1919951)
+
 
 - x축의 간격을 bins 인잣값으로 조정 가능
 - set_xlabel, set_ylabel 축들의 이름을 정할 수 있다.
@@ -1049,7 +1158,8 @@ axes1.set_ylabel('Tip')
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-19_20 03 04](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/72b9b84b-b78d-4e95-9d2f-c4ee4212ff35)
+
 
 기본 틀과 그래프 격자를 만들고 scatter 메서드에 total_bill, tips 열을 전달
 
@@ -1079,7 +1189,8 @@ axes1.set_title('Boxplot of Tips by Sex')
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-19_20 12 26](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/795f675a-478b-4569-b21e-96f66a2f246c)
+
 
 tips 데이터프레임에서 성별이 female인 데이터와 male인 데이터에서 tip 열 데이터만 추출해 리스트에 담아 전달 한 것
 
@@ -1130,7 +1241,8 @@ axes1.set_ylabel('Tip')
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-20_16 53 58](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/0c5c7f05-e4dd-4fe8-b956-cd4ec53af282)
+
 
 ---
 
@@ -1151,7 +1263,8 @@ ax.set_title('Total Bill Histogram with Density Plot')
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-20_18 03 24](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/88f77cf4-4f06-4d74-a15c-c9ae88b8b1b0)
+
 
 - 밀집도 그래프를 제외하고 싶으면 kde =False를 적으면 된다.
 
@@ -1159,7 +1272,8 @@ print(plt.show())
 ax = sns.distplot(tips['total_bill'], kde=False)
 ```
 
-사진
+![iShot_2023-08-20_18 21 09](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/6cf92357-7e62-43c9-82e1-63d45d34e717)
+
 
 - 밀집도 그래프만 나타내려면 hist=False를 적으면 된다.
 
@@ -1167,7 +1281,8 @@ ax = sns.distplot(tips['total_bill'], kde=False)
 ax = sns.distplot(tips['total_bill'], hist=False)
 ```
 
-사진
+![iShot_2023-08-20_18 22 13](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/28cd9e8e-4131-453d-a63a-a635fce155eb)
+
 
 - 양탄자(데이터 밀집도)를 표현하려면 rug = True를 적으면 된다.
 
@@ -1175,7 +1290,8 @@ ax = sns.distplot(tips['total_bill'], hist=False)
 ax = sns.distplot(tips['total_bill'], rug=True)
 ```
 
-사진
+![iShot_2023-08-20_18 24 09](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/bd44fd3c-e181-45fb-8d5e-5e562d1e4735)
+
 
 | kde=False | 밀집도 그래프 제외 |
 | --- | --- |
@@ -1218,7 +1334,8 @@ ax.set_ylabel('Tip')
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-20_18 36 09](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/8edbb559-60bd-474d-a37e-45e7169fc705)
+
 
 - 만약 회귀선을 제거 하고 싶다 → fit_reg=False
 
@@ -1249,7 +1366,8 @@ ax = tips['total_bill'].plot.hist()
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-20_18 44 12](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/0fa30cda-d1b1-46e1-9385-f03cf23ffaa0)
+
 
 ### 2개의 시리즈
 
@@ -1265,7 +1383,8 @@ ax = tips[['total_bill', 'tip']].plot.hist(alpha=0.5, bins=20, ax = ax)
 print(plt.show())
 ```
 
-사진
+![iShot_2023-08-20_18 46 25](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/730e8832-f9cd-4221-97c7-bec29466682b)
+
 
 | hist | 히스토그램 |
 | --- | --- |
@@ -2568,3 +2687,563 @@ for sex_group in sex_grouped:
 ```
 
 # 시계열 데이터
+
+```python
+from datetime import datetime
+```
+
+- now()
+- today()
+
+위의 메서드를 사용하면 현재 시간을 알 수 있다.
+
+```python
+from datetime import datetime
+now = datetime.now()
+print(now)
+
+'''
+2023-08-25 18:31:06.675203
+'''
+```
+
+- datetime 오브젝트 생성
+
+```python
+t = datetime(1970, 1, 1)
+print(t)
+
+'''
+1970-01-01 00:00:00
+'''
+```
+
+## datetime 오브젝트로 변환하기
+
+### 문자열을 datetime 오브젝트로 변환하기
+
+- to_datetime()
+
+df
+
+```python
+import pandas as pd
+import os
+
+ebola = pd.read_csv("/Users/sihoon/Downloads/country_timeseries.csv")
+
+Date  Day  ...  Deaths_Spain  Deaths_Mali
+0    1/5/2015  289  ...           NaN          NaN
+1    1/4/2015  288  ...           NaN          NaN
+2    1/3/2015  287  ...           NaN          NaN
+3    1/2/2015  286  ...           NaN          NaN
+4  12/31/2014  284  ...           NaN          NaN
+
+[5 rows x 18 columns]
+```
+
+info
+
+```python
+print(ebola.info())
+
+'''
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 122 entries, 0 to 121
+Data columns (total 18 columns):
+ #   Column               Non-Null Count  Dtype  
+---  ------               --------------  -----  
+ 0   Date                 122 non-null    object 
+ 1   Day                  122 non-null    int64  
+ 2   Cases_Guinea         93 non-null     float64
+ 3   Cases_Liberia        83 non-null     float64
+ 4   Cases_SierraLeone    87 non-null     float64
+ 5   Cases_Nigeria        38 non-null     float64
+ 6   Cases_Senegal        25 non-null     float64
+ 7   Cases_UnitedStates   18 non-null     float64
+ 8   Cases_Spain          16 non-null     float64
+ 9   Cases_Mali           12 non-null     float64
+ 10  Deaths_Guinea        92 non-null     float64
+ 11  Deaths_Liberia       81 non-null     float64
+ 12  Deaths_SierraLeone   87 non-null     float64
+ 13  Deaths_Nigeria       38 non-null     float64
+ 14  Deaths_Senegal       22 non-null     float64
+ 15  Deaths_UnitedStates  18 non-null     float64
+ 16  Deaths_Spain         16 non-null     float64
+ 17  Deaths_Mali          12 non-null     float64
+dtypes: float64(16), int64(1), object(1)
+memory usage: 17.3+ KB
+None
+'''
+```
+
+date_dt라는 새로운 컬럼을 정의해서 datetime형으로 추가했다.
+
+```python
+ebola['date_dt'] = pd.to_datetime((ebola['Date']))
+print(ebola.info())
+
+'''
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 122 entries, 0 to 121
+Data columns (total 19 columns):
+ #   Column               Non-Null Count  Dtype         
+---  ------               --------------  -----         
+ 0   Date                 122 non-null    object        
+ 1   Day                  122 non-null    int64         
+ 2   Cases_Guinea         93 non-null     float64       
+ 3   Cases_Liberia        83 non-null     float64       
+ 4   Cases_SierraLeone    87 non-null     float64       
+ 5   Cases_Nigeria        38 non-null     float64       
+ 6   Cases_Senegal        25 non-null     float64       
+ 7   Cases_UnitedStates   18 non-null     float64       
+ 8   Cases_Spain          16 non-null     float64       
+ 9   Cases_Mali           12 non-null     float64       
+ 10  Deaths_Guinea        92 non-null     float64       
+ 11  Deaths_Liberia       81 non-null     float64       
+ 12  Deaths_SierraLeone   87 non-null     float64       
+ 13  Deaths_Nigeria       38 non-null     float64       
+ 14  Deaths_Senegal       22 non-null     float64       
+ 15  Deaths_UnitedStates  18 non-null     float64       
+ 16  Deaths_Spain         16 non-null     float64       
+ 17  Deaths_Mali          12 non-null     float64       
+ 18  date_dt              122 non-null    **datetime64[ns]**
+dtypes: datetime64[ns](1), float64(16), int64(1), object(1)
+memory usage: 18.2+ KB
+None
+
+'''
+```
+
+```python
+print(ebola['date_dt'].head())
+
+'''
+0   2015-01-05
+1   2015-01-04
+2   2015-01-03
+3   2015-01-02
+4   2014-12-31
+Name: date_dt, dtype: datetime64[ns]
+'''
+```
+
+### 시계열 데이터를 구분해서 추출
+
+- strftime()
+
+```python
+now = datetime.now()
+nowdate = now.strftime('%Y-%m-%d')
+print(nowdate)
+'''
+2023-08-25
+'''
+```
+
+## read_csv에서 datetime 오브젝트로 변환하기
+
+datetime오브젝트로 변환하고 싶은 컬럼이 있다면 read_csv를 함과 동시에 datetime 오브젝트로 변환할 수 있다.
+
+```python
+ebola = pd.read_csv("/Users/sihoon/Downloads/country_timeseries.csv", parse_dates=['Date'])
+print(ebola.info())
+
+'''
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 122 entries, 0 to 121
+Data columns (total 18 columns):
+ #   Column               Non-Null Count  Dtype         
+---  ------               --------------  -----         
+ 0   Date                 122 non-null    **datetime64[ns]**
+ 1   Day                  122 non-null    int64         
+ 2   Cases_Guinea         93 non-null     float64       
+ 3   Cases_Liberia        83 non-null     float64       
+ 4   Cases_SierraLeone    87 non-null     float64       
+ 5   Cases_Nigeria        38 non-null     float64       
+ 6   Cases_Senegal        25 non-null     float64       
+ 7   Cases_UnitedStates   18 non-null     float64       
+ 8   Cases_Spain          16 non-null     float64       
+ 9   Cases_Mali           12 non-null     float64       
+ 10  Deaths_Guinea        92 non-null     float64       
+ 11  Deaths_Liberia       81 non-null     float64       
+ 12  Deaths_SierraLeone   87 non-null     float64       
+ 13  Deaths_Nigeria       38 non-null     float64       
+ 14  Deaths_Senegal       22 non-null     float64       
+ 15  Deaths_UnitedStates  18 non-null     float64       
+ 16  Deaths_Spain         16 non-null     float64       
+ 17  Deaths_Mali          12 non-null     float64       
+dtypes: datetime64[ns](1), float64(16), int64(1)
+memory usage: 17.3 KB
+None
+'''
+```
+
+## datetime 오브젝트에서 날짜 정보 추출하기
+
+시리즈에 여러 datetime 오브젝트가 있다면 
+
+d1[0].year → 첫 번째 datetime오브젝트의 연도 값 이런식으로 추출할 수 있다.
+
+### dt접근자
+
+```python
+ebola['date_dt'] = pd.to_datetime(ebola['Date'])
+ebola['year'] = ebola['date_dt'].dt.year
+print(ebola[['Date', 'date_dt', 'year']].head())
+
+'''
+        Date    date_dt  year
+0 2015-01-05 2015-01-05  2015
+1 2015-01-04 2015-01-04  2015
+2 2015-01-03 2015-01-03  2015
+3 2015-01-02 2015-01-02  2015
+4 2014-12-31 2014-12-31  2014
+'''
+```
+
+dt 접근자를 사용해 시계열 데이터를 정리할 수 있다.
+
+```python
+print(ebola[['Date', 'date_dt', 'year']].info())
+'''
+Data columns (total 3 columns):
+ #   Column   Non-Null Count  Dtype         
+---  ------   --------------  -----         
+ 0   Date     122 non-null    datetime64[ns]
+ 1   date_dt  122 non-null    datetime64[ns]
+ 2   year     122 non-null    int32         
+dtypes: datetime64[ns](2), int32(1)
+memory usage: 2.5 KB
+None
+'''
+```
+
+dt 접근자를 사용해 year를 출력하면 int 정수형으로 출력되는 것을 알 수있다.
+
+## 사례별 시계열 데이터 계산하기
+
+df
+
+```python
+print(ebola.iloc[-5:, :5])
+
+'''
+          Date  Day  Cases_Guinea  Cases_Liberia  Cases_SierraLeone
+117 2014-03-27    5         103.0            8.0                6.0
+118 2014-03-26    4          86.0            NaN                NaN
+119 2014-03-25    3          86.0            NaN                NaN
+120 2014-03-24    2          86.0            NaN                NaN
+121 2014-03-22    0          49.0            NaN                NaN
+'''
+```
+
+- 최초 발병일 찾기
+
+```python
+ebola['date_dt'] = pd.to_datetime(ebola['Date'])
+
+print(ebola['date_dt'].min())
+
+'''
+2014-03-22 00:00:00
+'''
+
+<class 'pandas._libs.tslibs.timestamps.Timestamp'>
+```
+
+참고로 Timestamp는 datetime 오브젝트와 호환되는 자료형이다.
+
+현재 - 최초발병일 → 현재 진행 상황 일 수를 알 수있다.
+
+```python
+ebola['outbreak_d'] = ebola['date_dt'] - ebola['date_dt'].min()
+print(ebola['outbreak_d'].head())
+
+'''
+0   289 days
+1   288 days
+2   287 days
+3   286 days
+4   284 days
+Name: outbreak_d, dtype: timedelta64[ns]
+'''
+```
+
+- 파산한 은행 수 계산하기
+
+df
+
+```python
+banks = pd.read_csv("/Users/sihoon/Downloads/banklist.csv")
+
+print(banks.head())
+
+'''
+                                           Bank Name  ... Updated Date
+0                Washington Federal Bank for Savings  ...    20-Dec-17
+1    The Farmers and Merchants State Bank of Argonia  ...    20-Oct-17
+2                                Fayette County Bank  ...    26-Jul-17
+3  Guaranty Bank, (d/b/a BestBank in Georgia & Mi...  ...    26-Jul-17
+4                                     First NBC Bank  ...     5-Dec-17
+
+[5 rows x 7 columns]
+'''
+```
+
+```python
+print(banks.info())
+
+'''
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 555 entries, 0 to 554
+Data columns (total 7 columns):
+ #   Column                 Non-Null Count  Dtype 
+---  ------                 --------------  ----- 
+ 0   Bank Name              555 non-null    object
+ 1   City                   555 non-null    object
+ 2   ST                     555 non-null    object
+ 3   CERT                   555 non-null    int64 
+ 4   Acquiring Institution  555 non-null    object
+ 5   Closing Date           555 non-null    object
+ 6   Updated Date           555 non-null    object
+dtypes: int64(1), object(6)
+memory usage: 30.5+ KB
+None
+'''
+```
+
+여기서 5열과, 6열은 Date이므로 Datetime형으로 바꿔주겠다.
+
+```python
+banks = pd.read_csv("/Users/sihoon/Downloads/banklist.csv", parse_dates=[5, 6])
+
+print(banks.info())
+
+'''
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 555 entries, 0 to 554
+Data columns (total 7 columns):
+ #   Column                 Non-Null Count  Dtype         
+---  ------                 --------------  -----         
+ 0   Bank Name              555 non-null    object        
+ 1   City                   555 non-null    object        
+ 2   ST                     555 non-null    object        
+ 3   CERT                   555 non-null    int64         
+ 4   Acquiring Institution  555 non-null    object        
+ 5   Closing Date           555 non-null    **datetime64[ns]**
+ 6   Updated Date           555 non-null    **datetime64[ns]**
+dtypes: datetime64[ns](2), int64(1), object(4)
+memory usage: 30.5+ KB
+None
+'''
+```
+
+- dt접근자와 quarter속성으로 파산한 분기 측정하기
+
+```python
+banks['closing_quarter'], banks['closing_year'] = (banks['Closing Date'].dt.quarter, banks['Closing Date'].dt.year)
+print(banks.head())
+
+'''
+                                           Bank Name  ... closing_year
+0                Washington Federal Bank for Savings  ...         2017
+1    The Farmers and Merchants State Bank of Argonia  ...         2017
+2                                Fayette County Bank  ...         2017
+3  Guaranty Bank, (d/b/a BestBank in Georgia & Mi...  ...         2017
+4                                     First NBC Bank  ...         2017
+
+[5 rows x 9 columns]
+'''
+```
+
+- 연도별로 파산한 은행의 개수 구하기 → groupby
+
+```python
+closing_year = banks.groupby(['closing_year']).size()
+print(closing_year)
+
+'''
+closing_year
+2000      2
+2001      4
+2002     11
+2003      3
+2004      4
+2007      3
+2008     25
+2009    140
+2010    157
+2011     92
+2012     51
+2013     24
+2014     18
+2015      8
+2016      5
+2017      8
+dtype: int64
+'''
+```
+
+- 각 연도별, 분기별 파산한 은행의 개수 구하기
+
+```python
+closing_year_quarter = banks.groupby(['closing_year', 'closing_quarter']).size()
+print(closing_year_quarter)
+
+'''
+closing_year  closing_quarter
+2000          4                   2
+2001          1                   1
+              2                   1
+              3                   2
+2002          1                   6
+              2                   2
+              3                   1
+              4                   2
+2003          1                   1
+              2                   1
+              4                   1
+2004          1                   3
+              2                   1
+2007          1                   1
+              3                   1
+              4                   1
+2008          1                   2
+              2                   2
+              3                   9
+              4                  12
+2009          1                  21
+              2                  24
+              3                  50
+              4                  45
+2010          1                  41
+              2                  45
+              3                  41
+              4                  30
+2011          1                  26
+              2                  22
+              3                  26
+              4                  18
+2012          1                  16
+              2                  15
+              3                  12
+              4                   8
+2013          1                   4
+              2                  12
+              3                   6
+              4                   2
+2014          1                   5
+              2                   7
+              3                   2
+              4                   4
+2015          1                   4
+              2                   1
+              3                   1
+              4                   2
+2016          1                   1
+              2                   2
+              3                   2
+2017          1                   3
+              2                   3
+              4                   2
+dtype: int64
+'''
+```
+
+연도별로 그룹화하고, 다음 분기별로 그룹화한 것이다.
+
+---
+
+그래프
+
+```python
+import pandas as pd
+import os
+from datetime import datetime
+import matplotlib.pyplot as plt
+
+banks = pd.read_csv("/Users/sihoon/Downloads/banklist.csv", parse_dates=[5, 6])
+
+banks['closing_quarter'], banks['closing_year'] = (banks['Closing Date'].dt.quarter, banks['Closing Date'].dt.year)
+closing_year = banks.groupby(['closing_year']).size()
+closing_year_quarter = banks.groupby(['closing_year', 'closing_quarter']).size()
+
+fig, ax = plt.subplots()
+ax = closing_year.plot()
+
+print(plt.show())
+
+fig, ax = plt.subplots()
+ax = closing_year_quarter.plot()
+print(plt.show())
+```
+
+![iShot_2023-08-25_19 36 27](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/918243e6-6436-4de2-be5a-996e2f11235d)
+
+
+![iShot_2023-08-25_19 36 34](https://github.com/ssssihoon/CodingTest_Algorithm/assets/127017020/2e88bd3b-a417-444a-883a-ac91e52eb10d)
+
+
+---
+
+Date는 문자열로 시간계산을 할 수 없다.
+
+→
+
+datetime 오브젝트로 변환 후 계산해야 한다.
+
+---
+
+### 시간 범위와 인덱스
+
+df
+
+```python
+ebola = pd.read_csv("/Users/sihoon/Downloads/country_timeseries.csv", parse_dates=[0])
+print(ebola.iloc[:5, :5])
+
+'''
+        Date  Day  Cases_Guinea  Cases_Liberia  Cases_SierraLeone
+0 2015-01-05  289        2776.0            NaN            10030.0
+1 2015-01-04  288        2775.0            NaN             9780.0
+2 2015-01-03  287        2769.0         8166.0             9722.0
+3 2015-01-02  286           NaN         8157.0                NaN
+4 2014-12-31  284        2730.0         8115.0             9633.0
+'''
+```
+
+현재 데이터에서 누락된 값이 있음을 알 수 있다.
+
+- 시간 범위 생성해 인덱스로 지정하기
+- date_range 메서드로 생성
+
+```python
+head_range = pd.date_range(start='2014-12-31', end='2015-01-05')
+print(head_range)
+
+'''
+DatetimeIndex(['2014-12-31', '2015-01-01', '2015-01-02', '2015-01-03',
+               '2015-01-04', '2015-01-05'],
+              dtype='datetime64[ns]', freq='D')
+'''
+```
+
+- 시간 범위로 인덱스 지정
+
+```python
+ebola_5 = ebola.head()
+ebola_5.index = ebola_5['Date']
+ebola_5.reindex(head_range)
+print(ebola_5.iloc[:5, :5])
+
+'''
+                 Date  Day  Cases_Guinea  Cases_Liberia  Cases_SierraLeone
+Date                                                                      
+2015-01-05 2015-01-05  289        2776.0            NaN            10030.0
+2015-01-04 2015-01-04  288        2775.0            NaN             9780.0
+2015-01-03 2015-01-03  287        2769.0         8166.0             9722.0
+2015-01-02 2015-01-02  286           NaN         8157.0                NaN
+2014-12-31 2014-12-31  284        2730.0         8115.0             9633.0
+'''
+```
