@@ -1,0 +1,51 @@
+number,name,position,age,nation,team,value
+1,Erling Haaland,Centre-Forward,23,Norway,Manchester City,_180.00m
+2,Kylian Mbapp_,Centre-Forward,24,France,Paris Saint-Germain,_180.00m
+3,Vinicius Junior,Left Winger,23,Brazil,Real Madrid,_150.00m
+4,Jude Bellingham,Central Midfield,20,England,Real Madrid,_120.00m
+5,Bukayo Saka,Right Winger,21,England,Arsenal FC,_120.00m
+6,Victor Osimhen,Centre-Forward,24,Nigeria,SSC Napoli,_120.00m
+7,Jamal Musiala,Attacking Midfield,20,Germany,Bayern Munich,_110.00m
+8,Phil Foden,Left Winger,23,England,Manchester City,_110.00m
+9,Pedri,Central Midfield,20,Spain,FC Barcelona,_100.00m
+10,Rodrygo,Right Winger,22,Brazil,Real Madrid,_100.00m
+11,Federico Valverde,Central Midfield,25,Uruguay,Real Madrid,_100.00m
+12,Gavi,Central Midfield,19,Spain,FC Barcelona,_90.00m
+13,Declan Rice,Defensive Midfield,24,England,Arsenal FC,_90.00m
+14,Rodri,Defensive Midfield,27,Spain,Manchester City,_90.00m
+15,Rafael Le_o,Left Winger,24,Portugal,AC Milan,_90.00m
+16,Martin ¨ªdegaard,Attacking Midfield,24,Norway,Arsenal FC,_90.00m
+17,Harry Kane,Centre-Forward,30,England,Bayern Munich,_90.00m
+18,Eduardo Camavinga,Central Midfield,20,France,Real Madrid,_85.00m
+19,Florian Wirtz,Attacking Midfield,20,Germany,Bayer 04 Leverkusen,_85.00m
+20,Khvicha Kvaratskhelia,Left Winger,22,Georgia,SSC Napoli,_85.00m
+21,Aur_lien Tchouam_ni,Defensive Midfield,23,France,Real Madrid,_85.00m
+22,Lautaro Mart_nez,Centre-Forward,26,Argentina,Inter Milan,_85.00m
+23,Gabriel Martinelli,Left Winger,22,Brazil,Arsenal FC,_80.00m
+24,Enzo Fern_ndez,Defensive Midfield,22,Argentina,Chelsea FC,_80.00m
+25,Randal Kolo Muani,Centre-Forward,24,France,Eintracht Frankfurt,_80.00m
+26,Christopher Nkunku,Second Striker,25,France,Chelsea FC,_80.00m
+27,Marcus Rashford,Left Winger,25,England,Manchester United,_80.00m
+28,R_ben Dias,Centre-Back,26,Portugal,Manchester City,_80.00m
+29,Bernardo Silva,Attacking Midfield,29,Portugal,Manchester City,_80.00m
+30,Mois_s Caicedo,Defensive Midfield,21,Ecuador,Chelsea FC,_75.00m
+31,Luis D_az,Left Winger,26,Colombia,Liverpool FC,_75.00m
+32,Josko Gvardiol,Centre-Back,21,Croatia,Manchester City,_75.00m
+33,Gabriel Jesus,Centre-Forward,26,Brazil,Arsenal FC,_75.00m
+34,Frenkie de Jong,Central Midfield,26,Netherlands,FC Barcelona,_75.00m
+35,Matthijs de Ligt,Centre-Back,24,Netherlands,Bayern Munich,_75.00m
+36,Nicol_ Barella,Central Midfield,26,Italy,Inter Milan,_75.00m
+37,Bruno Fernandes,Attacking Midfield,28,Portugal,Manchester United,_75.00m
+38,Jack Grealish,Left Winger,27,England,Manchester City,_75.00m
+39,Joshua Kimmich,Defensive Midfield,28,Germany,Bayern Munich,_75.00m
+40,Bruno Guimar_es,Defensive Midfield,25,Brazil,Newcastle United,_70.00m
+41,Ronald Ara_jo,Centre-Back,24,Uruguay,FC Barcelona,_70.00m
+42,Alphonso Davies,Left-Back,22,Canada,Bayern Munich,_70.00m
+43,_der Milit_o,Centre-Back,25,Brazil,Real Madrid,_70.00m
+44,Dusan Vlahovic,Centre-Forward,23,Serbia,Juventus FC,_70.00m
+45,Alexander Isak,Centre-Forward,23,Sweden,Newcastle United,_70.00m
+46,Kevin De Bruyne,Attacking Midfield,32,Belgium,Manchester City,_70.00m
+47,Nuno Mendes,Left-Back,21,Portugal,Paris Saint-Germain,_65.00m
+48,Darwin N__ez,Centre-Forward,24,Uruguay,Liverpool FC,_65.00m
+49,Alexis Mac Allister,Central Midfield,24,Argentina,Liverpool FC,_65.00m
+50,William Saliba,Centre-Back,22,France,Arsenal FC,_65.00m
