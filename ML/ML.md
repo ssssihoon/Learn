@@ -152,3 +152,292 @@ np.random.shuffle(index)
 ```
 
 ## 데이터 전처리
+
+### 넘파이로 데이터 준비
+
+넘파이로 훈련세트와 테스트 세트 나누기
+
+- 넘파이로 배열 만들기
+
+```python
+import numpy as np
+
+print(np.column_stack(([1, 2, 3], [4, 5, 6])))
+
+'''
+[[1 4]
+ [2 5]
+ [3 6]]
+'''
+```
+
+- fish_length, fish_weight 합치기
+
+```python
+fish_data = np.column_stack(([fish_length], [fish_weight]))
+print(fish_data[:5])
+
+'''
+[[  25.4   26.3   26.5   29.    29.    29.7   29.7   30.    30.    30.7
+    31.    31.    31.5   32.    32.    32.    33.    33.    33.5   33.5
+    34.    34.    34.5   35.    35.    35.    35.    36.    36.    37.
+    38.5   38.5   39.5   41.    41.     9.8   10.5   10.6   11.    11.2
+    11.3   11.8   11.8   12.    12.2   12.4   13.    14.3   15.   242.
+   290.   340.   363.   430.   450.   500.   390.   450.   500.   475.
+   500.   500.   340.   600.   600.   700.   700.   610.   650.   575.
+   685.   620.   680.   700.   725.   720.   714.   850.  1000.   920.
+   955.   925.   975.   950.     6.7    7.5    7.     9.7    9.8    8.7
+    10.     9.9    9.8   12.2   13.4   12.2   19.7   19.9]]
+'''
+```
+
+- 타깃 데이터를 만들 때 numpy라이브러리로 간단하게 만들 수 있다.
+    - np.ones()
+    - np.zeros()
+
+```python
+print(np.ones(5))
+'''
+[1. 1. 1. 1. 1.]
+'''
+print(np.zeros(5))
+'''
+[0. 0. 0. 0. 0.]
+'''
+```
+
+- concatenate()
+    - 가로로 길게 배열 할 수 있다.
+
+```python
+fish_target = np.concatenate((np.ones(35), np.zeros(14)))
+print(fish_target)
+
+'''
+[1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+ 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+ 0.]
+'''
+```
+
+### 사이킷런으로 훈련세트 & 테스트 세트 나누기
+
+- train_test_split()
+    
+    리스트나 배열을 비율에 맞게 훈련세트와 테스트 세트로 나누어준다.(+섞는 것 까지)
+    
+
+테스트 세트의 비율이 편향될 가능성이 있기 때문에 밑에 참고
+
+- stratify
+    
+    매개변수에 타깃 데이터를 전달하면 클래스 비율에 맞게 데이터를 나눈다.
+    
+
+```python
+from sklearn.model_selection import train_test_split
+```
+
+```python
+train_input, test_input, train_traget, test_target = train_test_split(fish_data, stratify=fish_target, random_state=42)
+```
+
+### KNN 훈련
+
+df
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+kn = KNeighborsClassifier()
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+fish_length = [25.4, 26.3, 26.5, 29.0, 29.0, 29.7, 29.7, 30.0, 30.0, 30.7, 31.0, 31.0,
+                31.5, 32.0, 32.0, 32.0, 33.0, 33.0, 33.5, 33.5, 34.0, 34.0, 34.5, 35.0,
+                35.0, 35.0, 35.0, 36.0, 36.0, 37.0, 38.5, 38.5, 39.5, 41.0, 41.0, 9.8,
+                10.5, 10.6, 11.0, 11.2, 11.3, 11.8, 11.8, 12.0, 12.2, 12.4, 13.0, 14.3, 15.0]
+fish_weight = [242.0, 290.0, 340.0, 363.0, 430.0, 450.0, 500.0, 390.0, 450.0, 500.0, 475.0, 500.0,
+                500.0, 340.0, 600.0, 600.0, 700.0, 700.0, 610.0, 650.0, 575.0, 685.0, 620.0, 680.0,
+                700.0, 725.0, 720.0, 714.0, 850.0, 1000.0, 920.0, 955.0, 925.0, 975.0, 950.0, 6.7,
+                7.5, 7.0, 9.7, 9.8, 8.7, 10.0, 9.9, 9.8, 12.2, 13.4, 12.2, 19.7, 19.9]
+
+fish_data = [[l, w] for l, w in zip(fish_length, fish_weight)]
+fish_target = [1]*35 + [0]*14
+train_input = fish_data[:35]
+train_target = fish_target[:35]
+test_input = fish_data[35:]
+test_target = fish_target[35:]
+input_arr = np.array(fish_data)
+target_arr = np.array(fish_target)
+np.random.seed(42)
+index = np.arange(49)
+np.random.shuffle(index)
+train_input = input_arr[index[:35]]
+train_target = target_arr[index[:35]]
+test_input = input_arr[index[35:]]
+test_target = target_arr[index[35:]]
+
+kn = kn.fit(train_input, train_target)
+kn.score(test_input, test_target)
+```
+
+```python
+print(kn.predict([[25, 150]]))
+
+'''
+[0.]
+'''
+```
+
+당연히 도미(1)로 예측해야할 것이 빙어(0)으로 예측됐다.
+
+→ 이러한 모순을 해결하기 위해 우선 그래프로 확인 
+
+- numpy 배열에서 ..
+    - a[:,0] : 모든 행에 대해서 첫번째 열의 정보를 가져다 달라 = 가로
+    - a[:,1] : 모든 행에 대해서 두번째 열의 정보를 가져다 달라 = 세로
+    - plt.scatter(a[:,0],a[:,1]) → x축 가로, y축 세로로 보여달라는 의미
+
+```python
+plt.scatter(train_input[:,0], train_input[:,1])
+plt.scatter(25, 150, marker='^')
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
+
+'''
+marker = '^'
+을 이용해 세모로 표기
+'''
+```
+
+사진
+
+KNN은 이웃한 5개를 기준으로 평가한다.
+
+그래프를 보면 x축과 y축이 1:1로 되어있지 않아서 발생하는 문제점인데, 
+
+그래프만 놓고 봤을 때는 당연히 도미와 가깝게 보인다. 하지만 x축 y축을 1:1로 놓고 보게 된다면
+
+```python
+plt.scatter(train_input[:,0], train_input[:,1])
+plt.scatter(25, 150, marker='^')
+plt.scatter(train_input[indexes,0], train_input[indexes,1], marker='D')
+plt.xlim((0, 1000))
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
+
+'''
+'D' -> 마름모
+x축의 범위를 동일하게 1000으로 맞춰준다.
+'''
+```
+
+사진
+
+이 그래프를 보게 된다면 세모는 바로 위의 네모 1개와 밑에 빙어(네모)4개를 이웃하고 있다.
+
+이렇게 작업하는 것은 데이터 전처리라고 한다.
+
+---
+
+데이터를 표현할 때 샘플 간의 거리에 영향을 받으므로 일정한 기준으로 맞춰 줘야 한다.
+
+- 전처리 방법
+    - 표준점수 z : 특성값이 0에서 **표준편차**의 몇 배만큼 떨어져 있는지를 나타낸다.
+        
+        표준 편차 : 분산의 제곱근
+        
+        분산 : 데이터에서 평균을 뺀 값을 모두 제곱한 다음 평균을 내어 구함
+        
+- mean = np.mean(train_input, axis = 0)
+    - 평균을 계산
+- std = np.std(train_input, axis = 0)
+    - 표준편차를 계산
+- axis = 0 : 행을 따라 각 열의 통계 값을 계산
+
+```python
+평균 빼기 → 표준편차 나누기
+
+train_scaled = (train_input - mean) / std
+```
+
+### 전처리 모델로 훈련하기
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+kn = KNeighborsClassifier()
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+fish_length = [25.4, 26.3, 26.5, 29.0, 29.0, 29.7, 29.7, 30.0, 30.0, 30.7, 31.0, 31.0,
+                31.5, 32.0, 32.0, 32.0, 33.0, 33.0, 33.5, 33.5, 34.0, 34.0, 34.5, 35.0,
+                35.0, 35.0, 35.0, 36.0, 36.0, 37.0, 38.5, 38.5, 39.5, 41.0, 41.0, 9.8,
+                10.5, 10.6, 11.0, 11.2, 11.3, 11.8, 11.8, 12.0, 12.2, 12.4, 13.0, 14.3, 15.0]
+fish_weight = [242.0, 290.0, 340.0, 363.0, 430.0, 450.0, 500.0, 390.0, 450.0, 500.0, 475.0, 500.0,
+                500.0, 340.0, 600.0, 600.0, 700.0, 700.0, 610.0, 650.0, 575.0, 685.0, 620.0, 680.0,
+                700.0, 725.0, 720.0, 714.0, 850.0, 1000.0, 920.0, 955.0, 925.0, 975.0, 950.0, 6.7,
+                7.5, 7.0, 9.7, 9.8, 8.7, 10.0, 9.9, 9.8, 12.2, 13.4, 12.2, 19.7, 19.9]
+
+fish_data = [[l, w] for l, w in zip(fish_length, fish_weight)]
+fish_target = [1]*35 + [0]*14
+train_input = fish_data[:35]
+train_target = fish_target[:35]
+test_input = fish_data[35:]
+test_target = fish_target[35:]
+input_arr = np.array(fish_data)
+target_arr = np.array(fish_target)
+np.random.seed(42)
+index = np.arange(49)
+np.random.shuffle(index)
+train_input = input_arr[index[:35]]
+train_target = target_arr[index[:35]]
+test_input = input_arr[index[35:]]
+test_target = target_arr[index[35:]]
+
+kn = kn.fit(train_input, train_target)
+kn.score(test_input, test_target)
+mean = np.mean(train_input, axis = 0)
+std = np.std(train_input, axis = 0)
+train_scaled = (train_input - mean) / std
+
+import matplotlib.pyplot as plt
+plt.scatter(train_scaled[:,0], train_scaled[:,1])
+plt.scatter(25, 150, marker='^')
+plt.xlabel('length')
+plt.ylabel('weight')
+print(plt.show())
+```
+
+train_scaled → 라는 전처리 모델로 그래프를 그려보면
+
+사진
+
+이렇게 샘플 하나로는 평균과 표준편차를 구할 수 없다. → 다시 산점도 구하기
+
+new = ([25, 150] - mean) / std
+
+```python
+new = ([25, 150] - mean) / std
+
+import matplotlib.pyplot as plt
+plt.scatter(train_scaled[:,0], train_scaled[:,1])
+plt.scatter(new[0], new[1], marker='^')
+plt.xlabel('length')
+plt.ylabel('weight')
+print(plt.show())
+```
+
+사진
+
+x축 y축의 범위가 같고, 세모는 도미와 가까운 범위에 있다.
+
+이제 KNN으로 다시 훈련
+
+```python
+kn.fit(train_scaled, train_target)
+tset_scaled = (test_input - mean) / std
+```
+
+# 회귀 알고리즘과 모델 규제
