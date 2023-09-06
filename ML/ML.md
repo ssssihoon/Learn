@@ -441,3 +441,410 @@ tset_scaled = (test_input - mean) / std
 ```
 
 # 회귀 알고리즘과 모델 규제
+
+## K-최근접 이웃 회귀
+
+예측하려는 샘플에 가장 가까운 샘플 k개를 선택, 클래스를 확인하여 다수클래스를 새로운 샘플의 클래스로 예측
+
+그 샘플의 타깃값의 평균을 구해 예측 타깃값을 구한다.
+
+### 데이터 준비
+
+df
+
+농어의 데이터이다.(길이, 무게)
+
+```python
+import numpy as np
+
+perch_length = np.array(
+    [8.4, 13.7, 15.0, 16.2, 17.4, 18.0, 18.7, 19.0, 19.6, 20.0, 
+     21.0, 21.0, 21.0, 21.3, 22.0, 22.0, 22.0, 22.0, 22.0, 22.5, 
+     22.5, 22.7, 23.0, 23.5, 24.0, 24.0, 24.6, 25.0, 25.6, 26.5, 
+     27.3, 27.5, 27.5, 27.5, 28.0, 28.7, 30.0, 32.8, 34.5, 35.0, 
+     36.5, 36.0, 37.0, 37.0, 39.0, 39.0, 39.0, 40.0, 40.0, 40.0, 
+     40.0, 42.0, 43.0, 43.0, 43.5, 44.0]
+     )
+perch_weight = np.array(
+    [5.9, 32.0, 40.0, 51.5, 70.0, 100.0, 78.0, 80.0, 85.0, 85.0, 
+     110.0, 115.0, 125.0, 130.0, 120.0, 120.0, 130.0, 135.0, 110.0, 
+     130.0, 150.0, 145.0, 150.0, 170.0, 225.0, 145.0, 188.0, 180.0, 
+     197.0, 218.0, 300.0, 260.0, 265.0, 250.0, 250.0, 300.0, 320.0, 
+     514.0, 556.0, 840.0, 685.0, 700.0, 700.0, 690.0, 900.0, 650.0, 
+     820.0, 850.0, 900.0, 1015.0, 820.0, 1100.0, 1000.0, 1100.0, 
+     1000.0, 1000.0]
+     )
+```
+
+- 산점도 그래프
+
+```python
+import matplotlib.pyplot as plt
+plt.scatter(perch_length, perch_weight)
+plt.xlabel("length")
+plt.ylabel("weight")
+print(plt.show())
+```
+
+사진
+
+이 산점도 그래프를 가지고 보면
+
+길이가 증가함에 따라 무게도 증가하는 것을 볼 수 있다.
+
+- 머신러닝 모델에 사용하기 전
+    
+    훈련세트와 테스트세트로 나누기
+    
+
+```python
+from sklearn.model_selection import train_test_split
+train_input, test_input, train_target, tset_target = train_test_split(
+    perch_length, perch_weight, random_state=42
+)
+```
+
+- 사이킷런을 사용하려면 2차원 배열 형태여야한다.
+    - 넘파이 배열 reshape() : 1차원배열 → 2차원배열
+        
+        배열의 크기를 지정할 수 있다.
+        
+
+```python
+train_input = train_input.reshape(-1, 1)
+test_input = test_input.reshape(-1, 1)
+print(train_input.shape, test_input.shape)
+
+'''
+(42, 1) (14, 1)
+'''
+
+(-1, 1) 을 사용한 이유 ->
+크기에 -1을 지정하면 나머지 원소 개수로 모두 채우라는 의미
+```
+
+2차원 배열 완료
+
+### 결정계수 R^2
+
+KNeighborsRegressor을 사용한다.
+
+```python
+from sklearn.neighbors import KNeighborsRegressor
+
+knr = KNeighborsRegressor()
+```
+
+- k 최근접 이웃 회귀 모델 훈련
+
+```python
+knr.fit(train_input, test_input)
+```
+
+- 정확도 점수
+
+```python
+print(knr.score(test_input, test_target))
+
+'''
+0.992809406101064
+'''
+```
+
+ㅅ
+
+수식
+
+사진
+
+- 타깃과 예측한 값 사이의 차이 구하기
+    - sklearn.metrics
+    - mean_absolute_error()
+
+```python
+from sklearn.metrics import mean_absolute_error
+
+test_prediction = knr.predict(test_input) # 테스트 세트에 대한 예측을 만든다.
+
+mae = mean_absolute_error(test_target, test_prediction)
+# 테스트 세트에 대한 평균 절댓값 오차를 계산
+print(mae) 
+
+'''
+19.157142857142862
+'''
+```
+
+만약 훈련세트를 사용해 평가해 본다면?
+
+```python
+print(knr.score(train_input, train_target))
+
+'''
+0.9698823289099254
+'''
+```
+
+### 과대적합 / 과소적합
+
+훈련 세트 점수 > 테스트 세트 점수 = 과대적합
+
+훈련 세트 점수 < 테스트 세트 점수 = 과소적합
+
+과소 적합 : 작은 데이터를 사용하는 경우 나타날 수 있다. → 모델을 더 복잡하게 만들자 ( k = 3, 7 ```)
+
+훈련세트점수 =.. 테스트세트점수 → GOOD
+
+---
+
+## 선형 회귀
+
+50cm인 농어의 무게를 예측하려한다.
+
+### K-최근접 이웃의 한계
+
+아무리 떨어져 있는 이웃이라도 가장 가까운 이웃의 샘플의 타깃을 평균하여 예측한다.
+
+df
+
+```python
+import numpy as np
+
+perch_length = np.array(
+    [8.4, 13.7, 15.0, 16.2, 17.4, 18.0, 18.7, 19.0, 19.6, 20.0,
+     21.0, 21.0, 21.0, 21.3, 22.0, 22.0, 22.0, 22.0, 22.0, 22.5,
+     22.5, 22.7, 23.0, 23.5, 24.0, 24.0, 24.6, 25.0, 25.6, 26.5,
+     27.3, 27.5, 27.5, 27.5, 28.0, 28.7, 30.0, 32.8, 34.5, 35.0,
+     36.5, 36.0, 37.0, 37.0, 39.0, 39.0, 39.0, 40.0, 40.0, 40.0,
+     40.0, 42.0, 43.0, 43.0, 43.5, 44.0]
+     )
+perch_weight = np.array(
+    [5.9, 32.0, 40.0, 51.5, 70.0, 100.0, 78.0, 80.0, 85.0, 85.0,
+     110.0, 115.0, 125.0, 130.0, 120.0, 120.0, 130.0, 135.0, 110.0,
+     130.0, 150.0, 145.0, 150.0, 170.0, 225.0, 145.0, 188.0, 180.0,
+     197.0, 218.0, 300.0, 260.0, 265.0, 250.0, 250.0, 300.0, 320.0,
+     514.0, 556.0, 840.0, 685.0, 700.0, 700.0, 690.0, 900.0, 650.0,
+     820.0, 850.0, 900.0, 1015.0, 820.0, 1100.0, 1000.0, 1100.0,
+     1000.0, 1000.0]
+     )
+```
+
+- 데이터를 훈련세트와 테스트세트로 나누기
+
+```python
+from sklearn.model_selection import train_test_split
+
+train_input, test_input, train_target, test_target = train_test_split(
+    perch_length, perch_weight, random_state=42
+)
+```
+
+- 훈련세트와 테스트세트 2차원 배열로 바꾸기
+
+```python
+train_input = train_input.reshape(-1, 1)
+test_input = test_input.reshape(-1, 1)
+```
+
+- KNN (k=3), 모델 훈련
+
+```python
+from sklearn.neighbors import KNeighborsRegressor
+
+knr = KNeighborsRegressor()
+
+knr.fit(train_input, train_target)
+```
+
+- 50cm인 농어의 무게를 예측
+
+```python
+print(knr.predict([[50]]))
+
+'''
+[1010.]
+'''
+```
+
+1010g이라고 예측했지만 실제로는 이것보다 더 나간다고 한다.
+
+왜 예측을 못했을까?
+
+→ 산점도그래프를 그려보기
+
+```python
+import matplotlib.pyplot as plt
+
+distances, indexes = knr.kneighbors([[50]]) # 50cm인 농어의 이웃 구하기
+plt.scatter(train_input, train_target) # 훈련세트 산점도그래프
+ 
+plt.scatter(train_input[indexes], train_target[indexes], marker='D') # 이웃샘플은 마름모로
+plt.scatter(50, 1010, marker='^') # 50cm 에 무게 1010g으로 예측한 값을 세모로
+print(plt.show())
+```
+
+사진
+
+- 이웃샘플 (마름모) 타깃의 평균구하기
+
+```python
+print(np.mean(train_target[indexes]))
+
+'''
+1010.0
+'''
+```
+
+이웃샘플 타깃의 평균 == 모델 예측값
+
+결론 → 새로운 샘플이 훈련세트의 범위를 벗어나면 엉뚱한 값을 예측한다. 
+
+ex:) 10000cm인 농어의 몸무게도 1010g이라고 표현된다. 이것이 **KNN한계**
+
+→ 선형회귀 알고리즘을 쓰자!
+
+---
+
+### 선형회귀
+
+- 사이킷런 선형회귀
+
+```python
+from sklearn.linear_model import LinearRegression
+lr = LinearRegression()
+```
+
+- 모델 훈련과 예측
+
+```python
+lr.fit(train_input, train_target)
+print(lr.predict([[50]]))
+
+'''
+[1241.83860323]
+'''
+```
+
+선형회귀의 직선은 기울기와 절편이 있어야한다. a, b
+
+y = ax + b
+
+y = 무게, x = 길이
+
+- a, b = lr.coef_, lr.intercept_
+
+```python
+print(lr.coef_, lr.intercept_)
+
+'''
+[39.01714496] -709.0186449535474
+'''
+```
+
+- 산점도 그래프
+
+```python
+import matplotlib.pyplot as plt
+plt.scatter(train_input, train_target)
+
+#15에서 50까지 1차 방정식 그래프 그리기
+plt.plot([15, 50], [15*lr.coef_ + lr.intercept_, 50*lr.coef_ + lr.intercept_])
+
+plt.scatter(50, 1241.8, marker='^')
+print(plt.show())
+```
+
+사진
+
+이처럼 직선 상에 농어의 데이터가 있음을 알 수 있는데
+
+- R^2를 확인해보면
+
+```python
+print(lr.score(train_input, train_target))
+print(lr.score(test_input, test_target))
+
+'''
+0.9398463339976041
+0.824750312331356
+
+->과소적합
+'''
+```
+
+그래프의 왼쪽아래를 보면 데이터가 직선에서 이탈한 것도 문제가 된다.
+
+### 다항회귀
+
+직선이 아닌 최적의 곡선을 그린다.
+
+y = ax^2 + bx + c
+
+y = 무게, x = 길이
+
+2차 방정식의 그래프를 그리기 위해서는 제곱한 항이 훈련세트에 있어야한다.
+
++ 타깃값은 그대로
+
+```python
+train_poly = np.column_stack((train_input**2, train_input))
+test_poly = np.column_stack((test_input**2, test_input))
+```
+
+이렇게하면 제곱한항과 일반항이 나열된다.
+
+- train_poly 모델로 훈련
+
+```python
+lr = LinearRegression()
+lr.fit(train_poly, train_target)
+
+print(lr.predict([[50**2, 50]]))
+
+'''
+[1573.98423528]
+'''
+```
+
+→ 선형 회귀 예측값 보다 높은값을 예측
+
+- 훈련계수와 절편 출력
+
+```python
+print(lr.coef_, lr.intercept_)
+
+'''
+[  1.01433211 -21.55792498] 116.05021078278338
+'''
+```
+
+→ 무게 = 1.01 * 길이^2 - 21.6 * 길이 + 116.05
+
+- 산점도 그래프
+
+```python
+point = np.arange(15, 50) # 구간별 직선을 그리기위해 정수 배열 15 ~ 49 
+
+plt.scatter(train_input, train_target)
+
+plt.plot(point, 1.01*point**2 - 21.6*point + 116.05)
+
+plt.scatter([50], [1574], marker = '^')
+print(plt.show())
+```
+
+사진
+
+- R^2 점수
+
+```python
+print(lr.score(train_poly, train_target))
+print(lr.score(test_poly, test_target))
+
+'''
+0.9706807451768623
+0.9775935108325122
+'''
+```
+
+점수 차이가 거의 안나지만 과소적합이 조금 남아있다.
