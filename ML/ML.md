@@ -848,3 +848,184 @@ print(lr.score(test_poly, test_target))
 ```
 
 점수 차이가 거의 안나지만 과소적합이 조금 남아있다.
+
+## 특성 공학과 규제
+
+### 다중 회귀
+
+여러 개의 특성을 사용한 선형 회귀를 다중회귀라고 한다.
+
+- 특성이 2개면
+    
+    타깃 = a * (특성1) + b*(특성2) + 절편 → 평면
+    
+
+현재 예제에서 농어의 길이, 높이, 두께를 사용할 것이다.
+
+그렇다면
+
+지난번 사용한 절 처럼 제곱하여 추가한다. 
+
+이러한 과정을 **특성 공학이라고 부른다.**
+
+제곱하고 특성끼리 곱해서 새로운 특성을 추가할 수도 있지만 사이킷런에서 제공하는 편리한 도구를 사용하면 된다.
+
+### 데이터 준비
+
+csv파일 → 판다스데이터프레임 → 넘파이 배열
+
+df
+
+perch_full에는 길이, 높이, 두께 가 포함되어 있다.
+
+```python
+import pandas as pd
+df = pd.read_csv('https://bit.ly/perch_csv')
+perch_full = df.to_numpy()
+print(perch_full)
+
+'''
+[[ 8.4   2.11  1.41]
+ [13.7   3.53  2.  ]
+ [15.    3.82  2.43]
+ [16.2   4.59  2.63]
+ [17.4   4.59  2.94]
+ [18.    5.22  3.32]
+ [18.7   5.2   3.12]
+ [19.    5.64  3.05]
+ [19.6   5.14  3.04]
+ [20.    5.08  2.77]
+ [21.    5.69  3.56]
+ [21.    5.92  3.31]
+ [21.    5.69  3.67]
+ [21.3   6.38  3.53]
+....]
+'''
+```
+
+- perch_full과 perch_weight를 훈련세트, 테스트세트로 나눔
+
+```python
+from sklearn.model_selection import train_test_split
+train_input, test_input, train_target, test_target =  train_test_split(
+       perch_full, perch_weight, random_state=42
+)
+```
+
+### 사이킷런의 변환기
+
+전처리 하기위한 클래스 : PolynomialFeatures
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+poly = PolynomialFeatures()
+```
+
+```python
+poly.fit([[2, 3]]) # 특성 추가
+print(poly.transform([[2, 3]]))
+
+'''
+[[1. 2. 3. 4. 6. 9.]]
+'''
+```
+
+[[2, 3]] → [[1. 2. 3. 4. 6. 9.]]
+
+2, 3을 각기 더한 값과 2, 3을 각기 곱한값이 추가됐다.
+
+1은 왜? → 없애주기위해 **include_bias = False**
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+poly = PolynomialFeatures(include_bias = False)
+poly.fit([[2, 3]]) # 특성 추가
+print(poly.transform([[2, 3]]))
+
+'''
+[[1. 2. 3. 4. 6. 9.]]
+'''
+```
+
+절편을 위한 항이 제거, 특성의 제곱과 특성끼리 곱항 항만 추가
+
+훈련을 해야 변환이 가능하다
+
+fit → transform : 사이킷런의 일관된 api때문
+
+fit() : 새롭게 만들 특성 조합을 찾는다.
+
+transform() : 실제로 데이터를 변환한다.
+
+- 예제에 적용
+
+```python
+poly = PolynomialFeatures(include_bias=False)
+poly.fit(train_input)
+train_poly = poly.transform(train_input)
+print(train_poly.shape)
+
+'''
+(42, 9)
+'''
+```
+
+- 특성 확인 하는 법
+
+```python
+print(poly.get_feature_names_out())
+
+'''
+['x0' 'x1' 'x2' 'x0^2' 'x0 x1' 'x0 x2' 'x1^2' 'x1 x2' 'x2^2']
+'''
+```
+
+- 다중 회귀 모델 훈련
+
+다중회귀 모델은 선형회귀 모델과 같은데 여러개의 특성을 사용하는 것 뿐이다.
+
+```python
+from sklearn.linear_model import LinearRegression
+lr = LinearRegression()
+lr.fit(train_poly, train_target)
+print(lr.score(train_poly, train_target))
+
+'''
+0.9903183436982125
+'''
+```
+
+- 테스트 점수 확인
+
+```python
+print(lr.score(test_poly, test_target))
+
+'''
+0.9714559911594168
+'''
+```
+
+테트스 세트에 대한 점수는 높아지지 않았지만 농어의 길이를 이용했을 때 처럼의 과소적합 문제는 나타나지 않았다.
+
+- 특성을 더 많이 추가(5제곱)
+
+```python
+poly = PolynomialFeatures(degree = 5, include_bias=False)
+
+'''
+0.9999999999989608
+-144.4049046409093
+'''
+```
+
+특성을 과하게 추가하게되면 선형모델은 강력해 지지만 너무 과대적합이 될 수 있으므로 적적하게 사용해야한다.
+
+### 규제
+
+- 머신러닝 모델이 훈련세트를 너무 과도하게 학습(과대적합)하지 못하도록 훼방하는 것
+
+→ 특성에 곱해지는 계수 (or 기울기) 의 크기를 작게 만든다.
+
+```python
+
+```
