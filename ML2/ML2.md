@@ -1,3 +1,5 @@
+# ML2
+
 # 머신러닝의 이해
 
 ## Numpy
@@ -343,3 +345,45 @@ A의 전치 행렬:
 ```
 
 ## Pandas
+
+- DataFrame → ndarray / List / Dictionary
+    - ary = df_dict.values
+    - li = df_dict.values.tolist()
+    - dict = df_dict.values.to_dict(’리스트명’)
+- DataFrame 데이터삭제
+    - df.drop(’컬럼명’, axis=1) → 컬럼 삭제
+    - df.drop([인덱스], axis=0) → 로우 삭제
+- DataFrame Index객체 → array로 변환
+    - indexes = df.index
+    - indexes.values
+- 새로운 인덱스를 재할당 (기존 인덱스는 컬럼으로 들어간다)
+    - reset_index()
+- 정렬(오름차순)
+    - df.sort_values(by=[’컬럼명’], ascending=True) # False → 내림차순
+    
+- 데이터 결손처리
+    - df.isna() : 결측값을 확인한다.
+    - df.isna().sum() : 결측값의 빈도 확인
+    - df[컬럼명].fillna(’값2’) : 결측값을 값2로 대체한다.
+- apply lambda로 데이터 가공
+    - df.apply(lambda x : 수행)
+
+```python
+def get_square(a):
+	return a**2
+
+print('3의 제곱은 : ', get_square(3))
+```
+
+```python
+lambda_square = lambda x : x**2
+print('3의 제곱은:', lambda_square(3))
+```
+
+```python
+titanic_df['Name_len'] = titanic_df['Name'].apply(lambda x : len(x))
+
+'''
+이름의 길이가 나온다.
+'''
+```
