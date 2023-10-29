@@ -387,3 +387,80 @@ titanic_df['Name_len'] = titanic_df['Name'].apply(lambda x : len(x))
 이름의 길이가 나온다.
 '''
 ```
+
+# 사이킷런, 머신러닝
+
+## 붓꽃 품종 예측하기
+
+붓꽃 데이터 세트로 붓꽃의 품종을 분류하기
+
+- 붓꽃 데이터 세트(피쳐) : 꽃잎의 길이와 너비, 꽃받침의 길이와 너비
+
+```python
+iris = load_iris()
+
+iris_data = iris.data # iris의 데이터를 변수에 저장(numpy이용)
+
+iris_label = iris.target # iris의 레이블(결정 값)데이터를 변수에 저장(numpy이용)
+print('irist target값:', iris_label)
+print('iris target명:', iris.target_names)
+
+iris_df = pd.DataFrame(data=iris_data, columns=iris.feature_names)
+iris_df['label'] = iris.target
+iris_df.head(3)
+
+'''
+irist target값: [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
+ 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+ 2 2]
+iris target명: ['setosa' 'versicolor' 'virginica']
+
+sepal length (cm)	sepal width (cm)	petal length (cm)	petal width (cm)	label
+0	5.1	3.5	1.4	0.2	0
+1	4.9	3.0	1.4	0.2	0
+2	4.7	3.2	1.3	0.2	0
+'''
+```
+
+- 피처에는 sepal length, petal length, petal width
+- 레이블(결정값)에는 0(Setosa), 1(versicolor), 2(virginica) 품종들
+
+---
+
+- 학습용 데이터와 테스트용 데이터 분리
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(iris_data, iris_label, test_size=0.2, random_state=11) 
+# 테스트 데이터 20%, 학습 데이터 80%
+```
+
+- DecisionTreeClassifier 객체 생성
+
+```python
+dt_clf = DecisionTreeClassifier(random_state=11)
+```
+
+- 학습 수행
+
+```python
+dt_clf.fit(X_train, y_train)
+```
+
+- 학습이 완료된 DecisionTreeClassifier 객체에서 테스트 데이터 세트로 예측 수행
+
+```python
+pred = dt_clf.predict(X_test)
+```
+
+- 예측 정확도
+
+```python
+from sklearn.metrics import accuracy_score
+print("예측 정확도: {0:4f}".format(accuracy_score(y_test, pred)))
+'''
+예측 정확도: 0.933333
+
+'''
+```
