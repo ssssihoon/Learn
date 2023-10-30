@@ -392,6 +392,14 @@ titanic_df['Name_len'] = titanic_df['Name'].apply(lambda x : len(x))
 
 ## 붓꽃 품종 예측하기
 
+- df로드
+- df설정
+- df의 결정값을 target으로 설정
+- teain_test_split()을 이용해 훈련세트와 테스트세트로 나누기
+- 학습 수행
+- 학습이 된 객체에서 테스트 데이터 세트로 예측 수행
+- 정확도 구하기
+
 붓꽃 데이터 세트로 붓꽃의 품종을 분류하기
 
 - 붓꽃 데이터 세트(피쳐) : 꽃잎의 길이와 너비, 꽃받침의 길이와 너비
@@ -462,5 +470,84 @@ print("예측 정확도: {0:4f}".format(accuracy_score(y_test, pred)))
 '''
 예측 정확도: 0.933333
 
+'''
+```
+
+## 사이킷런 기반 프레임워크
+
+- `fit()` : 학습
+- `predict()` : 예측
+
+---
+
+- data : 피처의 데이터 세트
+- target : 분류시 레이블 값, 회귀일 때는 숫자 결과값 데이터 세트
+- target_names : 개별 레이블의 이름
+- feature_names : 피처의 이름
+- DESCR : 데이터 세트에 대한 설명과 각 피처의 설명
+
+```python
+from sklearn.datasets import load_iris
+
+iris_data = load_iris()
+print(type(iris_data))
+
+'''
+<class 'sklearn.utils.Bunch'>
+'''
+```
+
+Bunch는 딕셔너리 자료형과 유사하다.
+
+```python
+keys = iris_data.keys()
+print('붓꽃 데이터 세트의 키들:', keys)
+
+'''
+붓꽃 데이터 세트의 키들: dict_keys(['data', 'target', 'frame', 'target_names', 'DESCR', 'feature_names', 'filename', 'data_module'])
+'''
+```
+
+```python
+print('\n feature_names 의 type:', type(iris_data.feature_names))
+print('feature_names의 shape:', len(iris_data.feature_names))
+print(iris_data.feature_names)
+
+print('\n target_names의 type:', type(iris_data.target_names))
+print('target_names의 shape:', len(iris_data.target_names))
+print(iris_data.target_names)
+
+print('\n data 의 type:', type(iris_data.data))
+print('data의 shape:', iris_data.data.shape)
+print(iris_data['data'])
+
+print('\n target 의 type:', type(iris_data.target))
+print('target 의 shape:', iris_data.target.shape)
+print(iris_data.target)
+
+'''
+feature_names 의 type: <class 'list'>
+feature_names의 shape: 4
+['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
+
+ target_names의 type: <class 'numpy.ndarray'>
+target_names의 shape: 3
+['setosa' 'versicolor' 'virginica']
+
+ data 의 type: <class 'numpy.ndarray'>
+data의 shape: (150, 4)
+[[5.1 3.5 1.4 0.2]
+ [4.9 3.  1.4 0.2]
+ ~~~~~~~~~~~~~~~
+ [6.2 3.4 5.4 2.3]
+ [5.9 3.  5.1 1.8]]
+
+ target 의 type: <class 'numpy.ndarray'>
+target 의 shape: (150,)
+[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2
+ 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+ 2 2]
 '''
 ```
