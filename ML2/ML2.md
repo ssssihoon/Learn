@@ -538,7 +538,7 @@ target_names의 shape: 3
 data의 shape: (150, 4)
 [[5.1 3.5 1.4 0.2]
  [4.9 3.  1.4 0.2]
- ~~~~~~~~~~~~~~~
+ ~~~~~~~~~~~~~~~~
  [6.2 3.4 5.4 2.3]
  [5.9 3.  5.1 1.8]]
 
@@ -551,3 +551,30 @@ target 의 shape: (150,)
  2 2]
 '''
 ```
+
+## Model_Selection
+
+- `train_test_split()`
+
+```python
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+iris = load_iris()
+dt_clf = DecisionTreeClassifier()
+train_data = iris.data
+train_label = iris.target
+dt_clf.fit(train_data, train_label)
+
+pred = dt_clf.predict(train_data)
+print('예측 정확도:', accuracy_score(train_label, pred))
+
+'''
+예측 정확도: 1.0
+'''
+```
+
+예측 정확도가 1인 이유는 이미 학습한 학습 데이터 세트를 기반으로 예측했기 때문.
+
+→
