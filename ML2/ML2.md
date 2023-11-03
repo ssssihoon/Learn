@@ -575,6 +575,75 @@ print('예측 정확도:', accuracy_score(train_label, pred))
 '''
 ```
 
-예측 정확도가 1인 이유는 이미 학습한 학습 데이터 세트를 기반으로 예측했기 때문.
+예측 정확도가 1인 이유는 이미 학습한 학습 데이터 세트를 기반으로 예측했기 때문.(이상함)
 
-→
+---
+
+- test_size : 테스트 데이터 세트 크기를 얼마로 샘플링할 것인가(%)
+- train_size : 학습용 데이터 세트 크기를 얼마로 생플링할 것인가(%)
+- shuffle : 데이터를 분리하기 전 데이터를 미리 섞을지를 결정
+- random_state : 난수 값
+- train_test_split() : 반환값은 튜플 형태, 순서대로 → 학습용 데이터의 피처 데이터 세트, 테스트용 데이터의 피처 데이터 세트, 학습용 데이터의 레이블 데이터 세트, 테스트용 데이터의 레이블 데이터 세트가 반환
+
+붓꽃 데이터 세트를 train_test_split()을 이용해 테스트 데이터 세트를 전체의 30%로, 학습 데이터 세트를 70%
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
+dt_clf = DecisionTreeClassifier()
+iris_data = load_iris()
+
+X_train, X_test, y_train, y_test = train_test_split(iris_data.data, iris_data.target, test_size = 0.3, random_state=121)
+
+dt_clf.fit(X_train, y_train)
+pred = dt_clf.predict(X_test)
+print('예측 정확도: {0:4f}'.format(accuracy_score(y_test, pred)))
+
+'''
+예측 정확도: 0.955556
+'''
+DecisionTreeClassifier를 이용해 fit()으로 학습용 피처, 레이블 데이터학습 ->
+predict로 테스트용 데이터의 피처 데이터 세트를 예측 ->
+예측한 것을 테스트용 데이터의 레이블 데이터를 예측성능 평가
+```
+
+테스트 데이터가 30%인 45개밖에 되지 않아 예측 성능을 평가하기에는 아쉽다.
+
+→ 교차 검증
+
+### 교차 검증
+
+학습 데이터 세트 내에서 학습데이터 세트와 검증 데이터 세트로 분할 이후 검증을 하고나서 테스트 데이터 세트에 적용해 평가하는 프로세스이다.
+
+- K 폴드 교차 검증
+    - K개의 데이터 폴드 세트를 만들어서 K번만큼 각 폴트 세트에 학습과 검증 평가를 반복적으로 수행하는 방법이다.
+        1. 데이터 세트를 K등분
+        2. 1~(K-1)은 학습 데이터 세트, 마지막 K번째 하나를 검증 데이터 세트로 설정
+        3. 학습 데이터 세트에서 학습 수행, 검증 데이터 세트에서 평가를 수행
+        4. K-1번째를 검증 데이터 세트로 설정 → K-2 ``` 반복
+        5. 1번째를 검증데이터, K번째를 검증데이터로 예측 평가
+        6. 모든 예측 평가를 구해 평균을 구한다.
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import KFold
+import numpy as np
+
+iris = load_iris()
+features = iris.data
+label = iris.target
+dt_clf = DecisionTreeClassifier(random_state=156)
+
+# 5개의 폴드 세트로 분리하는 KFold 객체와 폴드 세트별 정확도를 담을 리스트 객체 생성
+kfold = KFold(n_splits = 5)
+cv_accuracy = []
+print('붓꽃 데이터 세트 크기:', features.shape[0])
+
+'''
+붓꽃 데이터 세트 크기: 150
+'''
+```
