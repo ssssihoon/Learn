@@ -301,6 +301,75 @@ get_eval_by_threshold(y_test, pred_proba[:,1].reshape(-1,1), thresholds)
 
 ## 피마 인디언 당뇨병 예측
 
-# 정리
+데이터 세트
 
-.
+- Pregnancies : 임신 횟수
+- Glucose : 포도당 부하 검사 수치
+- BloodPressure : 혈압
+- SkinThickness : 팔 삼두근 뒤쪽의 피하지방 측정값(mm)
+- Insulin : 혈청 인슐린(mu U/ml)
+- BMI : 체질량지수
+- DiabetesPedigreeFunction : 당뇨 내력 가중치 값
+- Age
+- Outcome : 클래스 결정 값
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import f1_score, confusion_matrix, precision_recall_curve, roc_curve
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+diabetes_data = pd.read_csv('/content/drive/MyDrive/diabetes.csv')
+print(diabetes_data['Outcome'].value_counts())
+diabetes_data.head(3)
+
+'''
+0    500
+1    268
+Name: Outcome, dtype: int64
+Pregnancies	Glucose	BloodPressure	SkinThickness	Insulin	BMI	DiabetesPedigreeFunction	Age	Outcome
+0	6	148	72	35	0	33.6	0.627	50	1
+1	1	85	66	29	0	26.6	0.351	31	0
+2	8	183	64	0	0	23.3	0.672	32	1
+'''
+```
+
+```python
+diabetes_data.info()
+
+'''
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 768 entries, 0 to 767
+Data columns (total 9 columns):
+ #   Column                    Non-Null Count  Dtype  
+---  ------                    --------------  -----  
+ 0   Pregnancies               768 non-null    int64  
+ 1   Glucose                   768 non-null    int64  
+ 2   BloodPressure             768 non-null    int64  
+ 3   SkinThickness             768 non-null    int64  
+ 4   Insulin                   768 non-null    int64  
+ 5   BMI                       768 non-null    float64
+ 6   DiabetesPedigreeFunction  768 non-null    float64
+ 7   Age                       768 non-null    int64  
+ 8   Outcome                   768 non-null    int64  
+dtypes: float64(2), int64(7)
+memory usage: 54.1 KB
+'''
+```
+
+→ Null은 없고, 타입은 숫자형이다.
+
+---
+
+- 로지스틱 회귀를 이용한 예측 모델 생성
+    - 데이터 세트를 피처 데이터 세트와 클래스 데이터 세트로 나누고
+    - 학습 데이터 세트와 테스트 데이터 세트로 분리
+    - 로지스틱 회귀를 이용해 예측을 수행하고
+    - 성능평가 지표를 출력 (get_clf_eval, get_eval_by_threshold, precision_recall_curve_plot)
+    - 재현율 곡선을 시각화
