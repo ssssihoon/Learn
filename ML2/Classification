@@ -58,3 +58,70 @@ ML알고리즘 중 직관적으로 이해하기 쉬운 알고리즘이다.
     - 트리의 최대 깊이를 규정
 - max_leaf_nodes
     - 말단 노드의 최대 개수
+
+### 결정 트리 모델의 시각화
+
+- Graphiz 패키지 사용
+    - export_graphiz()
+
+---
+
+- 붓꽃 데이터 세트를 이용한 규칙트리
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+import warnings
+warnings.filterwarnings('ignore')
+
+# DecisionTree Classifier 생성
+dt_clf = DecisionTreeClassifier(random_state = 156)
+
+# 붓꽃 데이터를 로딩하고, 학습과 테스트 데이터 세트로 분리
+iris_data = load_iris()
+X_train, X_test, y_train, y_test = train_test_split(iris_data.data, iris_data.target, test_size = 0.2, random_state = 11)
+
+#DecisionTreeClassifier 학습
+dt_clf.fit(X_train, y_train)
+```
+
+- Graphviz를 이용해 export_graphviz()함수 사용으로 시각화할 수 있는 출력파일 생성
+
+```python
+from sklearn.tree import export_graphviz
+
+# export_graphviz()의 호출 결과로 out_file로 지정된 tree.dot 파일 생성
+export_graphviz(dt_clf, out_file = "tree.dot", class_names = iris_data.target_names, feature_names = iris_data.feature_names, impurity=True, filled = True)
+```
+
+- 시각화
+
+```python
+import graphviz
+
+with open("tree.dot") as f:
+  dot_graph = f.read()
+graphviz.Source(dot_graph)
+```
+
+사진
+
+- petal length(cm) ≤ 2.45와 같이 피처의 조건이 있는 것은 자식 노드를 만들기 위한 규칙 조건, 조건이 없다면 리프 노드
+- gini는 value = []로 주어진 데이터 분포에서의 지니 계수
+- samples는 현 규칙에 해당하는 데이터 건수
+- value = [] 는 클래스 값 기반의 데이터 건수. ex) Value = [41, 40, 39]라면 왼쪽부터 붓꽃의 클래스가 0 인, 1인, 2인 클래스의 개수.(Setosa, ```)
+- 각 노드의 색깔은 붓꽃 데이터의 레이블 값을 의미
+- 색깔이 짙어질수록 지니 계수가 낮고 해당 레이블에 속하는 샘플 데이터가 많다는 의미
+
+.
+
+규칙 생성 로직을 미리 제어하지 않으면 완벽하게 클래스 값을 구별하기 위해 트리노드를 계속해서 만들어 간다.
+
+→ 복잡한 규칙트리가 만들어져 과적합 문제가 발생
+
+→ 그러므로 max_depth 하이퍼 파라미터를 변경해 최대 트리 깊이를 제어
+
+min_samples_leaf의 값을 키우게 되면 더 이상 분할되지 않고 리프 노드가 될 수 있는 가능성이 높아진다.
+
+그러면 자연스럽게 브랜치 노드가 줄어들고 결정트리가 더 간결하게 만들어진다.
