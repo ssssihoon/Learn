@@ -125,3 +125,93 @@ graphviz.Source(dot_graph)
 min_samples_leaf의 값을 키우게 되면 더 이상 분할되지 않고 리프 노드가 될 수 있는 가능성이 높아진다.
 
 그러면 자연스럽게 브랜치 노드가 줄어들고 결정트리가 더 간결하게 만들어진다.
+
+.
+
+결정 트리는 균일도에 기반해 어떠한 속성을 규칙 조건으로 선택하느냐가 중요한 요건
+
+결정 트리 알고리즘이 학습을 통해 규칙을 정하는 데 있어 피처의 중요한 역할 지표를 feature_importances_ 속성 사용
+
+- feature_importances_ :
+    - ndarray 형태로 값을 반환
+    - 피처 순서대로 값이 할당
+    - 피처가 트리 분할 시 정보 이득이나 지니 계수를 얼마나 효율적으로 잘 개선시켰는지를 정규화된 값으로 표현 한 것.
+    - 값이 높을수록 해당 피처의 중요도가 높다
+
+.
+
+- 붓꽃 데이터 세트에서 피처별로 결정 트리 알고리즘에서 중요도를 추출
+    - fit()으로 학습된 DecisionTreeClassifier 객체 변수인 df_clf에서 feature_importances_ 속성을 가져와 피처별로 중요도 값을 매핑하고 이를 막대그래프로 표현
+
+```python
+import seaborn as sns
+import numpy as np
+%matplotlib inline
+
+# feature importance 추출
+print(np.round(dt_clf.feature_importances_, 3), "\n")
+
+# feature별 importance 매핑
+for name, value in zip(iris_data.feature_names, dt_clf.feature_importances_):
+  print('{0} : {1:3f}'.format(name, value))
+
+# feature importance를 column 별로 시각화
+sns.barplot(x=dt_clf.feature_importances_, y=iris_data.feature_names)
+
+'''
+[0.025 0.    0.555 0.42 ] 
+
+sepal length (cm) : 0.025005
+sepal width (cm) : 0.000000
+petal length (cm) : 0.554903
+petal width (cm) : 0.420092
+'''
+```
+
+피처들 중 petal_length가 가장 피처 중요도가 높음을 알 수 있다.
+
+## 결정 트리 과적합(Overfitting)
+
+- 시각화를 통해 과적합을 알아보기
+
+```python
+from sklearn.datasets import make_classification
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+plt.title("3 Class values with 2 Features Sample data creation")
+
+# 2차원 시각화를 위해서 피처2개, 클래스 3가지 유형의 분ㄹ 샘플 데이터 생성
+X_features, y_labels = make_classification(n_features=2, n_redundant=0, n_informative=2, n_classes=3, n_clusters_per_class=1, random_state = 0)
+
+# 그래프 형태로 2개의 피처로 2차원 좌표 시각화, 각 클래스 값은 다른 색깔로 표기
+plt.scatter(X_features[:, 0], X_features[:, 1], marker='o', c=y_labels, s=25, edgecolor='k')
+```
+
+사진
+
+- visualize_boundary() : 어떠한 결정 기준을 가지고 분할하면서 데이터를 분류하는지 확인 가능한 함수
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+
+# 특정한 트리 생성 제약 없는 결정 트리의 학습과 결정 경계 시각화
+dt_clf = DecisionTreeClassifier(random_state=156).fit(X_features, y_labels)
+visualize_boundary(dt_clf, X_features, y_labels)
+```
+
+사진
+
+일부 이상치 데이터까지 분류하기 위해 분할이 자주 일어나서 결정 기준 경계가 매우 많아졌다.
+
+이렇게 복잡한 모델은 예측 정확도가 떨어지게 된다.
+
+- min_samples_leaf를 이용해 제한
+
+```python
+# min_sample_leaf=6 로 트리 생성 조건을 제약한 결정 경계 시각화
+dt_clf = DecisionTreeClassifier(min_samples_leaf=6, random_state=156).fit(X_features, y_labels)
+visualize_boundary(dt_clf, X_features, y_labes)
+```
+
+사진
