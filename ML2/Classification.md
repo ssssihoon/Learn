@@ -170,7 +170,7 @@ petal width (cm) : 0.420092
 
 피처들 중 petal_length가 가장 피처 중요도가 높음을 알 수 있다.
 
-## 결정 트리 과적합(Overfitting)
+### 결정 트리 과적합(Overfitting)
 
 - 시각화를 통해 과적합을 알아보기
 
@@ -215,3 +215,138 @@ visualize_boundary(dt_clf, X_features, y_labes)
 ```
 
 사진
+
+## 앙상블 학습
+
+여러 개의 분류기를 생성하고 그 예측을 결합함으로써 정확한 최종 예측을 도출하는 기법
+
+- 종류
+    - 랜덤 포레스트
+    - 그래디언트 부스팅 알고리즘
+- 앙상블 학습의 유형
+    - 보팅
+    - 배깅
+    - 부스팅
+
+### 보팅 유형
+
+- Hard Voting : 다수의 분류기들 간 다수결로 결과값을 선정
+- Soft Voting : 다수의 분류기들의 결과값을 평균내어 결과값을 선정, 주로 사용
+
+### 보팅 분류기
+
+- 우선 로지스틱 회귀와 KNN 기반 분류기를 만들기
+
+```python
+import pandas as pd
+
+from sklearn.ensemble import VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+cancer = load_breast_cancer()
+
+data_df = pd.DataFrame(cancer.data, columns=cancer.feature_names)
+data_df.head(3)
+```
+
+- 소프트 보팅 방식으로 새롭게 보팅 분류기 만들기
+    - VotingClassifier 클래스
+        - estimators : 리스트 값으로 보팅에 사용될 여러 개의 Classifier 객체들을 튜플 형식으로 입력 받음
+        - voting : hard or soft
+
+```python
+# 개별 모델은 로지스틱 회귀, KNN
+lr_clf = LogisticRegression(solver='liblinear')
+knn_clf = KNeighborsClassifier(n_neighbors=8)
+
+# 개별 모델을 소프트 보팅 기반의 앙상블 모델로 구현한 분류기
+vo_clf = VotingClassifier( estimators=[('LR', lr_clf), ('KNN', knn_clf)], voting='soft')
+
+X_train, X_test, y_train, y_test = train_test_split(cancer.data, cancer.target, test_size=0.2, random_state=156)
+
+# VotingClassifier 학습/예측/평가
+vo_clf.fit(X_train, y_train)
+pred = vo_clf.predict(X_test)
+print("Voting 분류기 정확도 : {0:4f}".format(accuracy_score(y_test, pred)))
+
+# 개별 모델의 학습/예측/평가
+classifiers = [lr_clf, knn_clf]
+for classifier in classifiers:
+  classifier.fit(X_train, y_train)
+  pred = classifier.predict(X_test)
+  class_name = classifier.__class__.__name__
+  print('{0} 정확도: {1:.4f}'.format(class_name, accuracy_score(y_test, pred)))
+
+'''
+Voting 분류기 정확도 : 0.956140
+LogisticRegression 정확도: 0.9474
+KNeighborsClassifier 정확도: 0.9386
+'''
+```
+
+## 랜덤 포레스트
+
+배깅은 같은 알고리즘으로 여러 개의 분류기를 만들어서 보팅으로 최종 결정하는 알고리즘
+
+배깅의 대표적인 알고리즘
+
+여러 개의 결정 트리 분류기가 전체 데이터에서 배깅 방식으로 각자의 데이터를 샘플링해 개별적으로 학습을 수행한 뒤 최종적으로 모든 분류기가 보팅을 통해 예측 결정
+
+- 부트스트래핑 분할 방식 : 여러 개의 데이터 세트를 중첩되게 분리하는 것
+- 랜덤 포레스트의 서브세트 데이터는 부트스트래핑으로 데이터가 임의로 만들어진다.
+    - n_estimators=3 이라면 부트스트래핑으로 3개의 서브세트로 분할해준다.
+- RandomForestClassifier
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
+
+# 결정 트리에서 사용한 get_human_dataset()을 이용해 학습/테스트용 DataFrame 반환
+X_train, X_test, y_train, y_test = get_human_dataset()
+
+# 랜덤 포레스트 학습 및 별도의 테스트 세트로 예측 성능 평가
+rf_clf = RandomForestClassifier(random_state=0, max_depth=8)
+rf_clf.fit(X_train, y_train)
+pred = rf_clf.predict(X_test)
+accuracy = accuracy_score(y_test, pred)
+print('랜덤 포레스트 정확도: {0:.4f}'.format(accuracy))
+
+'''
+랜덤 포레스트 정확도: 0.9196
+'''
+```
+
+### 래덤 포레스트 하이퍼 파라미터 및 튜닝
+
+트리 기반의 앙상블 알고리즘의 단점은 하이퍼 파라미터가 너무 많고 그로 인해 튜닝을 위한 시간이 많이 소모된다는 것이다.
+
+- n_estimators : 랜덤 포레스트의 결정 트리 개수를 지정
+- max_features : 파라미터
+
+랜덤 포레스트의 파라미터를 튜닝
+
+앞의 사용자 행동 데이터 세트를 그대로 이용
+
+```python
+from sklearn.model_selection import GridSearchCV
+
+params = {
+    'n_estimators':[8, 16, 24],
+    'min_samples_leaf' : [1, 6, 12], 
+    'min_samples_split' : [2, 8, 16]
+}
+
+rf_clf = RandomForestRegressor(n_estimators=100, random_state=0, n_jobs=-1)
+grid_cv = GridSearchCV(rf_clf , param_grid=params , cv=2, n_jobs=1 )
+grid_cv.fit(x_train , y_train)
+
+print('최적 하이퍼 파라미터:\n', grid_cv.best_params_)
+print('최고 예측 정확도: {0:.4f}'.format(grid_cv.best_score_))
+```
