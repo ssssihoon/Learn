@@ -350,3 +350,4 @@ grid_cv.fit(x_train , y_train)
 print('최적 하이퍼 파라미터:\n', grid_cv.best_params_)
 print('최고 예측 정확도: {0:.4f}'.format(grid_cv.best_score_))
 ```
+## GBM(Gradient Boosting Machine)
