@@ -373,3 +373,12 @@ memory usage: 54.1 KB
     - 로지스틱 회귀를 이용해 예측을 수행하고
     - 성능평가 지표를 출력 (get_clf_eval, get_eval_by_threshold, precision_recall_curve_plot)
     - 재현율 곡선을 시각화
+
+## GBM(Gradient Boosting Machine)
+
+부스팅 알고리즘은 여러 개의 약한 학습기를 순차적으로 학습, 예측하면서 잘못 예측한 데이터에 가중치 부여를 통해 오류를 개선해 나가면서 학습하는 방식
+
+- AdaBoost(Adaptive boosting), 에이다부스트
+    - 오류 데이텅 가중치를 부여하면서 부스팅을 수행하는 대표적인 알고리즘
+- 그래디언트 부스트
+    - 가중치 업데이트를 경사 하강법(Gradient Descent)을 이용하는 것이다.
