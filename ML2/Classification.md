@@ -1,384 +1,352 @@
-# Evaluation
+# Classification
 
-- 머신러닝
-    - 데이터 가공/변환
-    - 모델 학습/예측
-    - 평가
-- 분류의 성능 평가 지표
-    - 정확도
-    - 오차행렬
-    - 정밀도
-    - 재현율
-    - F1 스코어
-    - ROC AUC
+지도학습의 대표적인 유형인 분류는 기존데이터가 어떤 레이블에 속하는지 패턴을 알고리즘으로 인지한 뒤에 새롭게 관측된 데이터에 대한 레이블을 판별하는 것이다
 
-## 정확도
+다양한 머신러닝 알고리즘
 
-정확도 = 예측 결과가 동일한 데이터 건수 / 전체 예측 데이터 건수
+- 나이브 베이즈 : 베이즈 통계와 생성 모델에 기반
+- 로지스틱 회귀 : 독립변수와 종속변수의 선형 관계성에 기반
+- 결정트리 : 데이터 균일도에 따른 규칙 기반의 결정 트리
+- 서포트 벡터 머신 : 개별 클래스 간의 최대 분류 마진을 효과적으로 찾아준다
+- 신경망 : 심층 연결 기반
+- 앙상블 : 서로 다른 or 같은 머신러닝 알고리즘을 결합
 
-직관적으로 모델 예측 성능을 나타내는 평가 지표
+## 결정 트리
+
+ML알고리즘 중 직관적으로 이해하기 쉬운 알고리즘이다.
+
+많은 노드(깊음)를 생성한다면 그만큼 복잡해 진다는 얘기고, 그 결과로 과적합이 발생한다.
+
+- 규칙 노드 : 규칙 조건
+- 리프 노드 : 결정된 클래스
+- 서브 노드 : 균일한 데이터 세트로 분할
+
+균일도가 높은 세트(같은 모집단)를 순서대로 나열하면 된다.
 
 ---
 
-- 예제
-    - 사이킷런의 BaseEstimator 클래스를 상속
-    - 아무런 학습을 하지 않고 성별에 따라 생존자를 예측하는 단순한 Classifier 생성
-    - 그러므로 fit() 메서드는 아무것도 수행하지 않는다.
-    - predict() 메서드로 Sex피처가 1이면 0, 그렇지 않으면 1로 예측하는 Classifier
+### 균일도 측정 by 엔트로피
+
+- 정보 이득 : 엔트로피라는 개념을 기반으로 한다.
+    - 엔트로피는 주어진 데이터 집합의 혼잡도를 의미
+    - 서로 다른 값이 섞여 있으면 엔트로피가 높고, 같은 값이 섞여 있으면 엔트로피가 낮다
+    - 정보 이득 지수 = (1 - 엔트로피 지수)
+    - 결정 트리는 이 정보 이득 지수로 분할 기준을 정한다.
+    - 정보 이득이 높은 속성을 기준으로 분할
+- 지니 계수 : 0이 가장 평등, 1이 가장 불평등
+    - 지니 계수가 낮을수록 데이터 균일도가 높은 것으로 해석해 지니 계수가 낮은 속성을 기준으로 분할
+
+### 결정 트리 모델의 특징
+
+- 균일도를 기반
+- 전처리 필요 x
+- 과적합으로 정확도가 떨어진다.
+
+### 결정 트리 파라미터
+
+- min_samples_split :
+    - 노드를 분할하기 위한 최소한의 샘플 데이터 수로 과적합을 제어하는 데 사용
+    - 디폴트 = 2, 작게 설정할수록 분할되는 노드가 많아져서 과적합 가능성 증가
+- min_samples_leaf
+    - 분할이 될 경우 왼쪽과 오른쪽의 브랜치 노드에서 가져야 할 최소한의 샘플 데이터 수
+    - 큰 값으로 설정될수록, 분할된 경우 왼쪽과 오른쪽의 브랜치 노드에서 가져야 할 최소한의 샘플 데이터 수 조건을 만족시키기 어려움
+    - 과적합 제어 용도
+- max_features
+    - 최적의 분할을 위해 고려할 최대 피처 개수, 디폴트는 None로 데이터 세트의 모든 피처를 사용해 분할 수행
+    - int형으로 지정하면 대상 피처의 개수, float형으로 지정하면 전체 피처 중 대상 피처의 퍼센트
+- max_depth
+    - 트리의 최대 깊이를 규정
+- max_leaf_nodes
+    - 말단 노드의 최대 개수
+
+### 결정 트리 모델의 시각화
+
+- Graphiz 패키지 사용
+    - export_graphiz()
+
+---
+
+- 붓꽃 데이터 세트를 이용한 규칙트리
 
 ```python
-from sklearn.base import BaseEstimator
-
-class MyDummyClassifier(BaseEstimator):
-  #fit() 메서드는 아무것도 학습하지 않음.
-  def fit(self, X, y=None):
-    pass
-  # predict() 메서드는 단순히 Sex 피처가 1 이면 0, 그렇지 않으면 1로 예측
-  def predict(self, X):
-    pred = np.zeros( (X.shape[0], 1))
-    for i in range(X.shape[0]):
-      if X['Sex'].iloc[i] == 1:
-           pred[i] = 0
-      else :
-        pred[i] = 1
-
-    return pred
-```
-
-- MyDummyClassifier을 이용해 앞 장의 타이타닉 생존자 예측
-    - 타이타닉 데이터를 추가
-    - 데이터를 가공
-    - Classifier을 이용해 학습, 예측, 평가 적용
-
-```python
-import pandas as pd
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+import warnings
+warnings.filterwarnings('ignore')
 
-#원본 데이터를 재로딩, 데이터 가공, 학습 데이터/테스트 데이터 분할
-titanic_df = pd.read_csv('/content/drive/MyDrive/train.csv')
-y_titanic_df = titanic_df['Survived']
-X_titanic_df = titanic_df.drop('Survived', axis = 1)
-X_titanic_df = transform_features(X_titanic_df)
-X_train, X_test, y_train, y_test = train_test_split(X_titanic_df, y_titanic_df, test_size = 0.2, random_state = 0)
+# DecisionTree Classifier 생성
+dt_clf = DecisionTreeClassifier(random_state = 156)
 
-#위에서 생성한 Dummy Classifier를 이용해 학습/ 예측 / 평가 수행
-myclf = MyDummyClassifier()
-myclf.fit(X_train, y_train)
+# 붓꽃 데이터를 로딩하고, 학습과 테스트 데이터 세트로 분리
+iris_data = load_iris()
+X_train, X_test, y_train, y_test = train_test_split(iris_data.data, iris_data.target, test_size = 0.2, random_state = 11)
 
-mypredictions = myclf.predict(X_test)
-print(accuracy_score(y_test, mypredictions))
-
-'''
-0.7877
-'''
+#DecisionTreeClassifier 학습
+dt_clf.fit(X_train, y_train)
 ```
 
----
-
-### MNIST
-
-- MNIST 데이터 세트를 변환해 불균형한 데이터 세트를 변환해 불균형한 데이터 세트로 만든 뒤
-- 정확도 지표 적용 시 어떤 문제가 발생할 수 있는지 확인
-- MNIST 데이터 세트는 0~9의 숫자 이미지 픽셀 정보이다.
-    - 7을 타겟으로 해 7만 True, 나머지 False → 10%만 True, 90% False
+- Graphviz를 이용해 export_graphviz()함수 사용으로 시각화할 수 있는 출력파일 생성
 
 ```python
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
-from sklearn.base import BaseEstimator
-from sklearn.metrics import accuracy_score
+from sklearn.tree import export_graphviz
+
+# export_graphviz()의 호출 결과로 out_file로 지정된 tree.dot 파일 생성
+export_graphviz(dt_clf, out_file = "tree.dot", class_names = iris_data.target_names, feature_names = iris_data.feature_names, impurity=True, filled = True)
+```
+
+- 시각화
+
+```python
+import graphviz
+
+with open("tree.dot") as f:
+  dot_graph = f.read()
+graphviz.Source(dot_graph)
+```
+
+사진
+
+- petal length(cm) ≤ 2.45와 같이 피처의 조건이 있는 것은 자식 노드를 만들기 위한 규칙 조건, 조건이 없다면 리프 노드
+- gini는 value = []로 주어진 데이터 분포에서의 지니 계수
+- samples는 현 규칙에 해당하는 데이터 건수
+- value = [] 는 클래스 값 기반의 데이터 건수. ex) Value = [41, 40, 39]라면 왼쪽부터 붓꽃의 클래스가 0 인, 1인, 2인 클래스의 개수.(Setosa, ```)
+- 각 노드의 색깔은 붓꽃 데이터의 레이블 값을 의미
+- 색깔이 짙어질수록 지니 계수가 낮고 해당 레이블에 속하는 샘플 데이터가 많다는 의미
+
+.
+
+규칙 생성 로직을 미리 제어하지 않으면 완벽하게 클래스 값을 구별하기 위해 트리노드를 계속해서 만들어 간다.
+
+→ 복잡한 규칙트리가 만들어져 과적합 문제가 발생
+
+→ 그러므로 max_depth 하이퍼 파라미터를 변경해 최대 트리 깊이를 제어
+
+min_samples_leaf의 값을 키우게 되면 더 이상 분할되지 않고 리프 노드가 될 수 있는 가능성이 높아진다.
+
+그러면 자연스럽게 브랜치 노드가 줄어들고 결정트리가 더 간결하게 만들어진다.
+
+.
+
+결정 트리는 균일도에 기반해 어떠한 속성을 규칙 조건으로 선택하느냐가 중요한 요건
+
+결정 트리 알고리즘이 학습을 통해 규칙을 정하는 데 있어 피처의 중요한 역할 지표를 feature_importances_ 속성 사용
+
+- feature_importances_ :
+    - ndarray 형태로 값을 반환
+    - 피처 순서대로 값이 할당
+    - 피처가 트리 분할 시 정보 이득이나 지니 계수를 얼마나 효율적으로 잘 개선시켰는지를 정규화된 값으로 표현 한 것.
+    - 값이 높을수록 해당 피처의 중요도가 높다
+
+.
+
+- 붓꽃 데이터 세트에서 피처별로 결정 트리 알고리즘에서 중요도를 추출
+    - fit()으로 학습된 DecisionTreeClassifier 객체 변수인 df_clf에서 feature_importances_ 속성을 가져와 피처별로 중요도 값을 매핑하고 이를 막대그래프로 표현
+
+```python
+import seaborn as sns
 import numpy as np
-import pandas as pd
+%matplotlib inline
 
-class MyFakeClassifier(BaseEstimator):
-  def fit(self, X, y):
-    pass
+# feature importance 추출
+print(np.round(dt_clf.feature_importances_, 3), "\n")
 
-    # 입력값으로 들어오는 X 데이터 세트의 크기만큼 모두 0값으로 만들어서 반환
-    def predict(self, X):
-      return np.zeros( (len(X), 1), dtype = bool)
+# feature별 importance 매핑
+for name, value in zip(iris_data.feature_names, dt_clf.feature_importances_):
+  print('{0} : {1:3f}'.format(name, value))
 
-# 사이킷런의 내장 데이터 세트인 load_digits()를 이용해 MNIST 데이터 로딩
-digits = load_digits()
-
-# digits 번호가 7번이면 True, 이를 astype(int)로 1로 변환, 7번이 아니면 False이고 0으로 변환
-y = (digits.target == 7).astype(int)
-X_train, X_test, y_train, y_test = train_test_split( digits.data, y, random_state = 11)
-```
-
-- y_test데이터 분포도를 확인하고 MyFakesClassifier을 이용해 예측과 평가를 수행
-
-```python
-# 불균형한 레이블 데이터 분포도 확인
-print("레이블 테스트 세트 크기 : ', y_test.shape)
-print("테스트 세트 레이블 0과 1의 분포도")
-print(pd.Series(y_test).value_counts())
-
-# Dummy Classifier로 학습/ 예측 / 정확도 평가
-fakeclf = MyFakeClassifier()
-fakeclf.fit(X_train, y_train)
-fakepred = fakeclf.predict(X_test)
-print('모든 예측을 0으로 하여도 정확도는 : {:.3f}'.format(accuracy_score(y_test, fakepred)))
+# feature importance를 column 별로 시각화
+sns.barplot(x=dt_clf.feature_importances_, y=iris_data.feature_names)
 
 '''
-레이블 테스트 세트 크기 : (450,)
-테스트 세트 레이블 0 과 1의 분포도
-0    405
-1     45
-dtype: int64
-모든 예측을 0으로 하여도 정확도는:0.900
+[0.025 0.    0.555 0.42 ] 
+
+sepal length (cm) : 0.025005
+sepal width (cm) : 0.000000
+petal length (cm) : 0.554903
+petal width (cm) : 0.420092
 '''
 ```
 
-## 오차 행렬
+피처들 중 petal_length가 가장 피처 중요도가 높음을 알 수 있다.
 
-- 이진 분류의 예측 오류가 얼마인지, 어떠한 유형의 예측 오류가 발생하고 있는지를 함께 나타내는 지표
-    - TN FP FN TP
-        - TN 예측값 Negative(0) → 실제값 Negative(0)
-        - FP 예측값 Positive(1) → 실제값 Negative(0)
-        - FN 예측값 Negative(0) → 실제값 Positive(1)
-        - TP 예측값 Positive(1) → 실제값 Positive(1)
+### 결정 트리 과적합(Overfitting)
+
+- 시각화를 통해 과적합을 알아보기
 
 ```python
-from sklearn.metrics import confusion_matrix
-
-confusion_matrix(y_test, fakepred)
-
-'''
-array([[405,   0],
-       [ 45,   0]])
-'''
-# [0, 0]의 경우, 예측으로 7이 아닌 Digit이. 실제 7이 아닌 Digit
-# [0, 1]의 경우, 예측으로 7이 아닌 Digitdl. 실제 7인 Digit
-```
-
-- 이 값을 조합 해 정확도, 정밀도, 재현율을 알 수 있다.
-- 정확도 = (TN+TP)/(TN + FP + FN + TP)
-
-## 정밀도와 재현율
-
-- 정밀도 = TP / (FP + TP)
-    - 예측을 Positive로 한 대상 중에 예측과 실제 값이 Positive로 일치한 데이터의 비율
-    - precision_score()
-- 재현율 = TP / (FN + TP)
-    - 실제 값이 Positive인 대상 중에 예측과 실제 값이 Positive로 일치한 데이터의 비율
-    - 민감도 or TPR
-    - recall_score()
-- matirx, accuracy, precision, recall등의 평가를 한꺼번에 호출하는 get_clf_eval() 함수
-
-```python
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
-
-def get_clf_eval(y_test, pred):
-  confusion = confusion_matrix(y_test, pred)
-  accuracy = accuracy_score(y_test, pred)
-  precision = precision_score(y_test, pred)
-  recall = recall_score(y_test, pred)
-  print('오차행렬')
-  print(confusion)
-  print('정확도: {0:.4f}, 정밀도: {1:.4f}, 재현율: {2:4f}'.format(accuracy, precision, recall))
-```
-
-```python
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split 
-from sklearn.linear_model import LogisticRegression
-
-# 원본 데이터를 재로딩, 데이터 가공, 학습데이터/테스트 데이터 분할. 
-titanic_df = pd.read_csv('./titanic_train.csv')
-y_titanic_df = titanic_df['Survived']
-X_titanic_df= titanic_df.drop('Survived', axis=1)
-X_titanic_df = transform_features(X_titanic_df)
-
-X_train, X_test, y_train, y_test = train_test_split(X_titanic_df, y_titanic_df, \
-                                                    test_size=0.20, random_state=11)
-
-lr_clf = LogisticRegression()
-
-lr_clf.fit(X_train , y_train)
-pred = lr_clf.predict(X_test)
-get_clf_eval(y_test , pred)
-
-'''
-오차 행렬
-[[104  14]
- [ 13  48]]
-정확도: 0.8492, 정밀도: 0.7742, 재현율: 0.7869
-'''
-```
-
-### 정밀도 / 재현율 트레이드 오프(상충관계)
-
-정밀도와 재현율은 서로 상충관계이다.
-
-- Positive 예측값이 많아지면 상대적으로 재현율 값이 높아진다.
-
----
-
-- 정밀도가 100%가 되는 법
-    - 확실한 기준이 되는 경우만 Positive, 나머지를 Negative
-- 재현율이 100%가 되는 법
-    - 모든 경우를 Positive
-
-## F1스코어
-
-- 정밀도와 재현율을 결합한 지표
-    - f1_score()
-
-```python
-from sklearn.metrics import f1_score
-f1 = f1_score(y_test, pred)
-print('F1 스코어 : {0:.4f}'.format(f1))
-
-'''
-F1 스코어 : 0.7966
-'''
-```
-
-타이타닉 생존자 예측의 임곗값을 변화시키면서 F1 스코어를 포함한 평가 지표를 구하기
-
-```python
-def get_clf_eval(y_test , pred):
-    confusion = confusion_matrix( y_test, pred)
-    accuracy = accuracy_score(y_test , pred)
-    precision = precision_score(y_test , pred)
-    recall = recall_score(y_test , pred)
-    # F1 스코어 추가
-    f1 = f1_score(y_test,pred)
-    print('오차 행렬')
-    print(confusion)
-    # f1 score print 추가
-    print('정확도: {0:.4f}, 정밀도: {1:.4f}, 재현율: {2:.4f}, F1:{3:.4f}'.format(accuracy, precision, recall, f1))
-
-thresholds = [0.4 , 0.45 , 0.50 , 0.55 , 0.60]
-pred_proba = lr_clf.predict_proba(X_test)
-get_eval_by_threshold(y_test, pred_proba[:,1].reshape(-1,1), thresholds)
-
-'''
-임곗값: 0.4
-오차 행렬
-[[99 19]
- [10 51]]
-정확도: 0.8380, 정밀도: 0.7286, 재현율: 0.8361, F1:0.7786
-임곗값: 0.45
-오차 행렬
-[[103  15]
- [ 12  49]]
-정확도: 0.8492, 정밀도: 0.7656, 재현율: 0.8033, F1:0.7840
-임곗값: 0.5
-오차 행렬
-[[104  14]
- [ 13  48]]
-정확도: 0.8492, 정밀도: 0.7742, 재현율: 0.7869, F1:0.7805
-임곗값: 0.55
-오차 행렬
-[[109   9]
- [ 15  46]]
-정확도: 0.8659, 정밀도: 0.8364, 재현율: 0.7541, F1:0.7931
-임곗값: 0.6
-오차 행렬
-[[112   6]
- [ 16  45]]
-정확도: 0.8771, 정밀도: 0.8824, 재현율: 0.7377, F1:0.8036
-'''
-```
-
-⇒임곗값이 0.6일 때가 가장 좋은 F1스코어
-
-그러나 재현율이 크게 감소하고 있으니 주의
-
-## ROC곡선과 AUC
-
-- 이진 분류의 예측 성능 측정에서 중요하게 사용되는 지표
-- ROC 곡선
-    - roc_curve()
-    - 수신자 판단 곡선 : FPR(False Positive Rate)이 변할 때 TPR(True Positive Rate)이 어떻게 변하는지를 나타내는 곡선.
-        - TPR : 재현율
-        - TNR : 특이성
-    - ROC 곡선이 가운데 직선에 가까울수록 성능이 떨어지는 것이며, 멀어질수록 성능은 뛰어나다.
-
-## 피마 인디언 당뇨병 예측
-
-데이터 세트
-
-- Pregnancies : 임신 횟수
-- Glucose : 포도당 부하 검사 수치
-- BloodPressure : 혈압
-- SkinThickness : 팔 삼두근 뒤쪽의 피하지방 측정값(mm)
-- Insulin : 혈청 인슐린(mu U/ml)
-- BMI : 체질량지수
-- DiabetesPedigreeFunction : 당뇨 내력 가중치 값
-- Age
-- Outcome : 클래스 결정 값
-
-```python
-import numpy as np
-import pandas as pd
+from sklearn.datasets import make_classification
 import matplotlib.pyplot as plt
 %matplotlib inline
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
-from sklearn.metrics import f1_score, confusion_matrix, precision_recall_curve, roc_curve
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
+plt.title("3 Class values with 2 Features Sample data creation")
 
-diabetes_data = pd.read_csv('/content/drive/MyDrive/diabetes.csv')
-print(diabetes_data['Outcome'].value_counts())
-diabetes_data.head(3)
+# 2차원 시각화를 위해서 피처2개, 클래스 3가지 유형의 분ㄹ 샘플 데이터 생성
+X_features, y_labels = make_classification(n_features=2, n_redundant=0, n_informative=2, n_classes=3, n_clusters_per_class=1, random_state = 0)
 
-'''
-0    500
-1    268
-Name: Outcome, dtype: int64
-Pregnancies	Glucose	BloodPressure	SkinThickness	Insulin	BMI	DiabetesPedigreeFunction	Age	Outcome
-0	6	148	72	35	0	33.6	0.627	50	1
-1	1	85	66	29	0	26.6	0.351	31	0
-2	8	183	64	0	0	23.3	0.672	32	1
-'''
+# 그래프 형태로 2개의 피처로 2차원 좌표 시각화, 각 클래스 값은 다른 색깔로 표기
+plt.scatter(X_features[:, 0], X_features[:, 1], marker='o', c=y_labels, s=25, edgecolor='k')
 ```
+
+사진
+
+- visualize_boundary() : 어떠한 결정 기준을 가지고 분할하면서 데이터를 분류하는지 확인 가능한 함수
 
 ```python
-diabetes_data.info()
+from sklearn.tree import DecisionTreeClassifier
+
+# 특정한 트리 생성 제약 없는 결정 트리의 학습과 결정 경계 시각화
+dt_clf = DecisionTreeClassifier(random_state=156).fit(X_features, y_labels)
+visualize_boundary(dt_clf, X_features, y_labels)
+```
+
+사진
+
+일부 이상치 데이터까지 분류하기 위해 분할이 자주 일어나서 결정 기준 경계가 매우 많아졌다.
+
+이렇게 복잡한 모델은 예측 정확도가 떨어지게 된다.
+
+- min_samples_leaf를 이용해 제한
+
+```python
+# min_sample_leaf=6 로 트리 생성 조건을 제약한 결정 경계 시각화
+dt_clf = DecisionTreeClassifier(min_samples_leaf=6, random_state=156).fit(X_features, y_labels)
+visualize_boundary(dt_clf, X_features, y_labes)
+```
+
+사진
+
+## 앙상블 학습
+
+여러 개의 분류기를 생성하고 그 예측을 결합함으로써 정확한 최종 예측을 도출하는 기법
+
+- 종류
+    - 랜덤 포레스트
+    - 그래디언트 부스팅 알고리즘
+- 앙상블 학습의 유형
+    - 보팅
+    - 배깅
+    - 부스팅
+
+### 보팅 유형
+
+- Hard Voting : 다수의 분류기들 간 다수결로 결과값을 선정
+- Soft Voting : 다수의 분류기들의 결과값을 평균내어 결과값을 선정, 주로 사용
+
+### 보팅 분류기
+
+- 우선 로지스틱 회귀와 KNN 기반 분류기를 만들기
+
+```python
+import pandas as pd
+
+from sklearn.ensemble import VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+cancer = load_breast_cancer()
+
+data_df = pd.DataFrame(cancer.data, columns=cancer.feature_names)
+data_df.head(3)
+```
+
+- 소프트 보팅 방식으로 새롭게 보팅 분류기 만들기
+    - VotingClassifier 클래스
+        - estimators : 리스트 값으로 보팅에 사용될 여러 개의 Classifier 객체들을 튜플 형식으로 입력 받음
+        - voting : hard or soft
+
+```python
+# 개별 모델은 로지스틱 회귀, KNN
+lr_clf = LogisticRegression(solver='liblinear')
+knn_clf = KNeighborsClassifier(n_neighbors=8)
+
+# 개별 모델을 소프트 보팅 기반의 앙상블 모델로 구현한 분류기
+vo_clf = VotingClassifier( estimators=[('LR', lr_clf), ('KNN', knn_clf)], voting='soft')
+
+X_train, X_test, y_train, y_test = train_test_split(cancer.data, cancer.target, test_size=0.2, random_state=156)
+
+# VotingClassifier 학습/예측/평가
+vo_clf.fit(X_train, y_train)
+pred = vo_clf.predict(X_test)
+print("Voting 분류기 정확도 : {0:4f}".format(accuracy_score(y_test, pred)))
+
+# 개별 모델의 학습/예측/평가
+classifiers = [lr_clf, knn_clf]
+for classifier in classifiers:
+  classifier.fit(X_train, y_train)
+  pred = classifier.predict(X_test)
+  class_name = classifier.__class__.__name__
+  print('{0} 정확도: {1:.4f}'.format(class_name, accuracy_score(y_test, pred)))
 
 '''
-<class 'pandas.core.frame.DataFrame'>
-RangeIndex: 768 entries, 0 to 767
-Data columns (total 9 columns):
- #   Column                    Non-Null Count  Dtype  
----  ------                    --------------  -----  
- 0   Pregnancies               768 non-null    int64  
- 1   Glucose                   768 non-null    int64  
- 2   BloodPressure             768 non-null    int64  
- 3   SkinThickness             768 non-null    int64  
- 4   Insulin                   768 non-null    int64  
- 5   BMI                       768 non-null    float64
- 6   DiabetesPedigreeFunction  768 non-null    float64
- 7   Age                       768 non-null    int64  
- 8   Outcome                   768 non-null    int64  
-dtypes: float64(2), int64(7)
-memory usage: 54.1 KB
+Voting 분류기 정확도 : 0.956140
+LogisticRegression 정확도: 0.9474
+KNeighborsClassifier 정확도: 0.9386
 '''
 ```
 
-→ Null은 없고, 타입은 숫자형이다.
+## 랜덤 포레스트
 
----
+배깅은 같은 알고리즘으로 여러 개의 분류기를 만들어서 보팅으로 최종 결정하는 알고리즘
 
-- 로지스틱 회귀를 이용한 예측 모델 생성
-    - 데이터 세트를 피처 데이터 세트와 클래스 데이터 세트로 나누고
-    - 학습 데이터 세트와 테스트 데이터 세트로 분리
-    - 로지스틱 회귀를 이용해 예측을 수행하고
-    - 성능평가 지표를 출력 (get_clf_eval, get_eval_by_threshold, precision_recall_curve_plot)
-    - 재현율 곡선을 시각화
+배깅의 대표적인 알고리즘
 
-## GBM(Gradient Boosting Machine)
+여러 개의 결정 트리 분류기가 전체 데이터에서 배깅 방식으로 각자의 데이터를 샘플링해 개별적으로 학습을 수행한 뒤 최종적으로 모든 분류기가 보팅을 통해 예측 결정
 
-부스팅 알고리즘은 여러 개의 약한 학습기를 순차적으로 학습, 예측하면서 잘못 예측한 데이터에 가중치 부여를 통해 오류를 개선해 나가면서 학습하는 방식
+- 부트스트래핑 분할 방식 : 여러 개의 데이터 세트를 중첩되게 분리하는 것
+- 랜덤 포레스트의 서브세트 데이터는 부트스트래핑으로 데이터가 임의로 만들어진다.
+    - n_estimators=3 이라면 부트스트래핑으로 3개의 서브세트로 분할해준다.
+- RandomForestClassifier
 
-- AdaBoost(Adaptive boosting), 에이다부스트
-    - 오류 데이텅 가중치를 부여하면서 부스팅을 수행하는 대표적인 알고리즘
-- 그래디언트 부스트
-    - 가중치 업데이트를 경사 하강법(Gradient Descent)을 이용하는 것이다.
+```python
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
+
+# 결정 트리에서 사용한 get_human_dataset()을 이용해 학습/테스트용 DataFrame 반환
+X_train, X_test, y_train, y_test = get_human_dataset()
+
+# 랜덤 포레스트 학습 및 별도의 테스트 세트로 예측 성능 평가
+rf_clf = RandomForestClassifier(random_state=0, max_depth=8)
+rf_clf.fit(X_train, y_train)
+pred = rf_clf.predict(X_test)
+accuracy = accuracy_score(y_test, pred)
+print('랜덤 포레스트 정확도: {0:.4f}'.format(accuracy))
+
+'''
+랜덤 포레스트 정확도: 0.9196
+'''
+```
+
+### 랜덤 포레스트 하이퍼 파라미터 및 튜닝
+
+트리 기반의 앙상블 알고리즘의 단점은 하이퍼 파라미터가 너무 많고 그로 인해 튜닝을 위한 시간이 많이 소모된다는 것이다.
+
+- n_estimators : 랜덤 포레스트의 결정 트리 개수를 지정
+- max_features : 파라미터
+
+랜덤 포레스트의 파라미터를 튜닝
+
+앞의 사용자 행동 데이터 세트를 그대로 이용
+
+```python
+from sklearn.model_selection import GridSearchCV
+
+params = {
+    'n_estimators':[8, 16, 24],
+    'min_samples_leaf' : [1, 6, 12], 
+    'min_samples_split' : [2, 8, 16]
+}
+
+rf_clf = RandomForestRegressor(n_estimators=100, random_state=0, n_jobs=-1)
+grid_cv = GridSearchCV(rf_clf , param_grid=params , cv=2, n_jobs=1 )
+grid_cv.fit(x_train , y_train)
+
+print('최적 하이퍼 파라미터:\n', grid_cv.best_params_)
+print('최고 예측 정확도: {0:.4f}'.format(grid_cv.best_score_))
+```
