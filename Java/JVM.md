@@ -1,5 +1,3 @@
-# 제목 없음
-
 # JVM
 
 Java Virtual Machine : 자바 가상 머신
