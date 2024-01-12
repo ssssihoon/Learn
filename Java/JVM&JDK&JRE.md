@@ -64,4 +64,24 @@ Java로 개발한 프로그램을 컴파일하여 만들어지는 바이트코�
 
 ### Runtime Data Area
 
+# JDK & JRE
+
+[출처](https://velog.io/@fe1/JDK-JRE-JVM)
+
+<img width="702" alt="Untitled 2" src="https://github.com/ssssihoon/Learn/assets/127017020/546006a2-70a6-4746-9d43-68af5da80f52">
+
+[출처](https://deeryoung.tistory.com/21)
+
+## **JDK(Java Development Kit)**
+
+자바 개발 도구
+
+코드 작성, 컴파일 및 디버깅에 필요한 모든 도구를 제공
+
+## **JRE(Java Runtime Environment)**
+
+자바 실행 환경
+
+개발 기능이 필요하지 않은 컴퓨터에서 자바 응용 프로그램을 실행하는데 필요
+
 프로그램을 수행하기 위해 OS에서 할당받은 메모리 공간
