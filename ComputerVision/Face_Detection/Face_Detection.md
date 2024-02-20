@@ -39,7 +39,8 @@ cv2.destroyAllWindows()  # 모든 윈도우 닫기
 
 컬러 → 흑백 : `변수명_흑백 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)`
 
-![Untitled](Face_Detection%20cd3a9aac109248159d2bedfe6b7bdc5b/Untitled.png)
+![Untitled](https://github.com/ssssihoon/Learn/assets/127017020/93184248-ed09-4ad1-af80-54005dae4fa7)
+
 
 ## Use Haarcascade and OpenCV to Face Detection
 
@@ -82,7 +83,8 @@ cv2.waitKey(0)  # 아무 키 입력 대기
 cv2.destroyAllWindows()  # 모든 윈도우 닫기
 ```
 
-![Untitled](Face_Detection%20cd3a9aac109248159d2bedfe6b7bdc5b/Untitled%201.png)
+![Untitled 1](https://github.com/ssssihoon/Learn/assets/127017020/7154154d-55d6-4622-a01c-c0a69d588a51)
+
 
 → 긍정오류 (1)
 
@@ -95,7 +97,8 @@ cv2.destroyAllWindows()  # 모든 윈도우 닫기
 
 → scaleFactor을 조절해 이미지를 확대, 축소한 이미지를 감지한다.
 
-![Untitled](Face_Detection%20cd3a9aac109248159d2bedfe6b7bdc5b/Untitled%202.png)
+![Untitled 2](https://github.com/ssssihoon/Learn/assets/127017020/5eb54752-35dc-4b61-9f57-3152df06dc2a)
+
 
 얼굴이 클 수록 매개변수를 더 크게 조절해야한다.
 
@@ -117,7 +120,8 @@ cv2.waitKey(0)  # 아무 키 입력 대기
 cv2.destroyAllWindows()  # 모든 윈도우 닫기
 ```
 
-![Untitled](Face_Detection%20cd3a9aac109248159d2bedfe6b7bdc5b/Untitled%203.png)
+![Untitled 3](https://github.com/ssssihoon/Learn/assets/127017020/f169380d-9ad7-4119-ad01-a1a86f4fdf89)
+
 
 두 명의 얼굴을 더 감지해야함.
 
@@ -147,7 +151,8 @@ cv2.waitKey(0)  # 아무 키 입력 대기
 cv2.destroyAllWindows()  # 모든 윈도우 닫기
 ```
 
-![Untitled](Face_Detection%20cd3a9aac109248159d2bedfe6b7bdc5b/Untitled%204.png)
+![Untitled 4](https://github.com/ssssihoon/Learn/assets/127017020/1a9c1dc4-b724-4851-8325-946034826d60)
+
 
 하나의 긍정오류
 
@@ -171,7 +176,8 @@ cv2.waitKey(0)  # 아무 키 입력 대기
 cv2.destroyAllWindows()  # 모든 윈도우 닫기
 ```
 
-![Untitled](Face_Detection%20cd3a9aac109248159d2bedfe6b7bdc5b/Untitled%205.png)
+![Untitled 5](https://github.com/ssssihoon/Learn/assets/127017020/6cc490b1-dda4-402d-bac5-29e21f464eb3)
+
 
 ## HOG - Histograms of Oriented Gradients
 
@@ -220,8 +226,81 @@ cv2.waitKey(0)  # 아무 키 입력 대기
 cv2.destroyAllWindows()  # 모든 윈도우 닫기
 ```
 
-![Untitled](Face_Detection%20cd3a9aac109248159d2bedfe6b7bdc5b/Untitled%206.png)
+![Untitled 6](https://github.com/ssssihoon/Learn/assets/127017020/fd548965-ab4f-43e2-9220-b97294686099)
+
 
 ## Detecting faces with CNN
 
-## Haarcascade x HOG x CNN
+```python
+image = cv2.imread('/Users/sihoon/Desktop/ComputerVision/Computer Vision Masterclass/Images/people2.jpg')
+
+# cnn 감지기 사용
+cnn_detector = dlib.cnn_face_detection_model_v1('/Users/sihoon/Desktop/ComputerVision/Computer Vision Masterclass/Weights/mmod_human_face_detector.dat')
+```
+
+```python
+detections = cnn_detector(image, 1)
+for face in detections:
+    l, t, r, b, c = face.rect.left(), face.rect.top(), face.rect.right(), face.rect.bottom(), face.confidence
+    print(c)
+    cv2.rectangle(image, (l, t), (r, b), (255, 255, 0), 2)
+cv2.imshow('Image', image)
+cv2.waitKey(0)  # 아무 키 입력 대기
+cv2.destroyAllWindows()  # 모든 윈도우 닫기
+
+'''
+1.144068717956543
+1.137050986289978
+1.127898931503296
+1.1200220584869385
+1.1149381399154663
+1.1131561994552612
+1.0975712537765503
+1.094212293624878
+1.0853136777877808
+1.0801897048950195
+1.0800751447677612
+1.0784766674041748
+1.066402554512024
+1.06417977809906
+
+-> 신뢰도. 높을수록 좋음
+'''
+```
+
+![Untitled 7](https://github.com/ssssihoon/Learn/assets/127017020/2a0ef7e3-5415-40c8-8c05-691c0e7bef17)
+
+
+## Face detection in Webcam
+
+```python
+import cv2
+
+face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+video_capture = cv2.VideoCapture(0)
+
+while True:
+    # Capture frame-by-frame
+    ret, frame = video_capture.read()
+
+    image_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    detections = face_detector.detectMultiScale(image_gray, minSize=(100, 100),
+                                                minNeighbors=5)
+
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in detections:
+        print(w, h)
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+    # Display the resulting frame
+    cv2.imshow('Video', frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# When everything is done, release the capture
+video_capture.release()
+cv2.destroyAllWindows()
+```
