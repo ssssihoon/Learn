@@ -63,3 +63,137 @@ print(os.listdir('/Users/sihoon/Desktop/ComputerVision/Computer Vision Mastercla
 
 #train폴더에 속한 파일명을 모두 볼 수 있다.
 ```
+
+## LBPH (Local Binary Patterns Histograms)
+
+- 저장된 히스토그램과 분류하고자 하는 새 이미지의 히스토그램을 비교할 때 사용
+
+```python
+pip install opencv-python
+pip install opencv-contrib-python
+
+import cv2
+
+lbph_classifier = cv2.face.LBPHFaceRecognizer_create()
+lbph_classifier.train(faces, ids)
+lbph_classifier.write('lbph_classifier.yml') # 분류기를 저장할 때 기본형식 yml
+
+-> lbph 분류기파일 생성됨.
+
+```
+
+## Recognizing faces
+
+```python
+lbph_face_classifier = cv2.face.LBPHFaceRecognizer_create()
+lbph_face_classifier.read('/Users/sihoon/Desktop/ComputerVision/Face_Recognition/lbph_classifier.yml')
+```
+
+```python
+test_image = '/Users/sihoon/Desktop/ComputerVision/Face_Recognition/yalefaces/test/subject10.sad.gif'
+```
+
+```python
+image = Image.open(test_image).convert('L') # 흑백이미지로 변환
+image_np = np.array(image, 'uint8')
+```
+
+```python
+image_np.shape
+
+'''
+(243, 320) -> 흑백 이미지 픽셀
+'''
+```
+
+```python
+prediction = lbph_face_classifier.predict(image_np)
+prediction
+
+'''
+(10, 6.384336446373091)
+'''
+10 -> 클래스 분류 (맞음)
+6.384336446373091 -> 신뢰도. 높을수록 성능이 좋음
+```
+
+```python
+expected_output = int(os.path.split(test_image)[1].split('.')[0].replace('subject', ''))
+expected_output
+
+'''
+10
+'''
+```
+
+```python
+cv2.putText(image_np, 'PredL: ' + str(prediction[0]), (10, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 255, 0))
+cv2.putText(image_np, 'EXP: ' + str(expected_output), (10, 50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 255, 0))
+
+# 10, 30 은 글자의 위치를 나타낸다.
+
+cv2.imshow('Image', image_np)
+cv2.waitKey(0)  # 아무 키 입력 대기
+cv2.destroyAllWindows()  # 모든 윈도우 닫기
+```
+
+![Untitled](Face_Recognition%204205d5fc40494d46aef1a59681d148a3/Untitled.png)
+
+## Evaluating the face classifier
+
+```python
+# 이미지 전처리
+paths = [os.path.join('/Users/sihoon/Desktop/ComputerVision/Face_Recognition/yalefaces/test', f) for f in os.listdir('/Users/sihoon/Desktop/ComputerVision/Face_Recognition/yalefaces/test')]
+predictions = []
+expected_outputs = []
+for path in paths:
+    #print(path)
+    image = Image.open(path).convert('L')
+    image_np = np.array(image, 'uint8')
+    prediction, _ = lbph_face_classifier.predict(image_np)
+    expected_output = int(os.path.split(path)[1].split('.')[0].replace('subject', ''))
+
+    predictions.append(prediction)
+    expected_outputs.append(expected_output)
+```
+
+```python
+predictions = np.array(predictions)
+expected_outputs = np.array(expected_outputs)
+```
+
+```python
+from sklearn.metrics import accuracy_score
+accuracy_score(expected_outputs, predictions)
+'''
+0.6666666666
+'''
+```
+
+```python
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(expected_outputs, predictions)
+cm
+```
+
+```python
+# 오차행렬 시각화
+import seaborn as sns
+
+sns.heatmap(cm, annot=True);
+```
+
+![Untitled](Face_Recognition%204205d5fc40494d46aef1a59681d148a3/Untitled%201.png)
+
+## LBPH Parameter
+
+1. Radius(반지름)
+    1. 높아질수록 더 많은 패턴을 찾을 수 있음. 그러나 모서리를 찾기 힘듦
+2. Neighbors(이웃 수)
+    1. 반지름이 1인 경우 이웃은 8, 사용되는 픽셀의 개수를 나타냄.
+3. grid_x and grid_y(가로, 세로 축의 셀 수)
+    1. 정사각형 마다 히스토그램이 있음. 셀이 더 많을수록 히스토그램의 수도 많아져 이미지에서 더 많은 패턴을 찾아낼 수 있음.
+4. Threshold(임계값) ; 감지의 신뢰도
+    1. 값이 높을수록 얼굴 인식의 품질이 높아짐.
+
+## Detecting facial points
