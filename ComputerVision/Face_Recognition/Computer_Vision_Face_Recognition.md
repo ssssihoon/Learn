@@ -197,3 +197,50 @@ sns.heatmap(cm, annot=True);
     1. 값이 높을수록 얼굴 인식의 품질이 높아짐.
 
 ## Detecting facial points
+
+```python
+import dlib
+import cv2
+```
+
+```python
+face_detector = dlib.get_frontal_face_detector()
+points_detector = dlib.shape_predictor('/Users/sihoon/Desktop/ComputerVision/Computer Vision Masterclass/Weights/shape_predictor_68_face_landmarks.dat') # 얼굴 포인트를 감지할 모델
+```
+
+```python
+image = cv2.imread('/Users/sihoon/Desktop/ComputerVision/Computer Vision Masterclass/Images/people2.jpg')
+```
+
+```python
+face_detection = face_detector(image, 1) # 1 : 이미지의 스케일
+for face in face_detection:
+    l, t, r, b = face.left(), face.top(), face.right(), face.bottom()
+    cv2.rectangle(image, (l, t), (r, b), (0, 255, 255), 2)
+cv2.imshow('Image', image)
+cv2.waitKey(0)  # 아무 키 입력 대기
+cv2.destroyAllWindows()  # 모든 윈도우 닫기
+```
+
+![Untitled](Face_Recognition%204205d5fc40494d46aef1a59681d148a3/Untitled%202.png)
+
+68개의 포인트로 얼굴을 찾아냄
+
+- 얼굴을 어떻게 찾아냈는지 확인
+
+```python
+face_detection = face_detector(image, 1) # 1 : 이미지의 스케일
+for face in face_detection:
+    points = points_detector(image, face)
+    for point in points.parts():
+        cv2.circle(image, (point.x, point.y), 2, (0, 255,0), 1)
+        # 원을 그림. 포인트의 x좌표와 y좌표. 경계선의 두께
+
+    l, t, r, b = face.left(), face.top(), face.right(), face.bottom()
+    cv2.rectangle(image, (l, t), (r, b), (0, 255, 255), 2)
+cv2.imshow('Image', image)
+cv2.waitKey(0)  # 아무 키 입력 대기
+cv2.destroyAllWindows()  # 모든 윈도우 닫기
+```
+
+![Untitled](Face_Recognition%204205d5fc40494d46aef1a59681d148a3/Untitled%203.png)
