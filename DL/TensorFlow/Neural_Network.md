@@ -1,15 +1,15 @@
-# DL
-
 # Neural Network
 
 ## SingleLayer Perceptron
 
-![Untitled](DL%208b9c158a22f04c2eb1a7896aee8a4821/Untitled.png)
+![Untitled](https://github.com/ssssihoon/Learn/assets/127017020/8c62df07-df06-4bfc-9cb6-c207c6988129)
+
 
 - Input은 기능의 값을 가질 수 있음. 여러 Input에 따른 가중치를 곱함
 - 입력값을 곱한 결과를 활성화 함수(Activation Function)로 보냄
 
-![Untitled](DL%208b9c158a22f04c2eb1a7896aee8a4821/Untitled%201.png)
+![Untitled 1](https://github.com/ssssihoon/Learn/assets/127017020/5002d3a6-c966-4414-9d99-38ea2b2228c9)
+
 
 - 활성화 함수의 출력 →
     - 입력값의 합이 양수면 1
@@ -17,7 +17,8 @@
 - 만약 입력값이 애초에 0이었다면?
     - 편향(Bias)값을 정의해 더함
 
-![Untitled](DL%208b9c158a22f04c2eb1a7896aee8a4821/Untitled%202.png)
+![Untitled 2](https://github.com/ssssihoon/Learn/assets/127017020/eddbfb3e-6893-4cba-96d4-3980c064fb1a)
+
 
 ## MultiLayer Perceptron
 
@@ -37,12 +38,14 @@
     
     역전파 과정에서 [Sigmoid 함수](https://heytech.tistory.com/360?category=453617)의 미분값이 거듭 곱해지면 출력층과 멀어질수록 [Gradient](https://heytech.tistory.com/380) 값이 매우 작아질 수밖에 없습니다.
     
-    ![Untitled](DL%208b9c158a22f04c2eb1a7896aee8a4821/Untitled%203.png)
+    ![Untitled 3](https://github.com/ssssihoon/Learn/assets/127017020/e17eb3fd-5257-4ccf-94bb-6f60406e8752)
+
     
 - `**hyperbolic tangent (하이퍼볼릭 탄젠트) 함수**`
     - **Gradient Vanishing가 있다.**
 
-![Untitled](DL%208b9c158a22f04c2eb1a7896aee8a4821/Untitled%204.png)
+![Untitled 4](https://github.com/ssssihoon/Learn/assets/127017020/46a045f5-6c39-44cf-9691-89e8a92604d4)
+
 
 1. **범위**: 하이퍼볼릭 탄젠트 함수의 출력 범위는 -1부터 1까지입니다. 이는 시그모이드 함수와 비슷하지만, 시그모이드 함수는 0부터 1까지의 범위를 가집니다.
 2. **대칭성**: tanh 함수는 0을 중심으로 좌우 대칭입니다. 즉, 입력이 양수일 때 양수 값을 출력하고, 입력이 음수일 때 음수 값을 출력합니다.
@@ -51,7 +54,8 @@
 5. **기울기 포화 문제**: 입력이 큰 절댓값을 가질 때 하이퍼볼릭 탄젠트 함수의 기울기는 0에 가까워집니다. 이는 역전파 동안 그라디언트 소실 문제를 초래할 수 있습니다.
 6. **중심 위치**: 하이퍼볼릭 탄젠트 함수는 중심을 0으로 가지므로, 신경망의 출력을 평균이 0인 형태로 만들어주는 효과가 있습니다.
 
-![Untitled](DL%208b9c158a22f04c2eb1a7896aee8a4821/Untitled%205.png)
+![Untitled 5](https://github.com/ssssihoon/Learn/assets/127017020/88a681fd-0308-455f-b00b-58b3609eca08)
+
 
 - `**ReLU (렐루) 함수**`
 1. **선형 및 비선형**: ReLU 함수는 입력값이 0보다 큰 경우에는 입력값을 그대로 출력하고, 0보다 작은 경우에는 0으로 출력합니다. 이는 입력값에 따라 선형적으로 작동하며, 동시에 입력이 0 이하인 경우 비선형적으로 동작하여 신경망이 비선형성을 표현할 수 있게 합니다.
@@ -61,6 +65,36 @@
 5. **최적화의 용이성**: ReLU 함수는 기울기가 0 또는 1이기 때문에 경사 하강법을 사용하여 모델을 최적화하기 용이합니다.
 6. **Dead ReLU 문제**: 입력값이 음수일 때 출력이 0이 되므로, 학습 도중 뉴런이 활성화되지 않을 수 있습니다. 이는 "Dead ReLU"라고 알려진 문제로, 학습 중에 일부 뉴런이 항상 비활성 상태로 남아있을 수 있습니다.
 
-![Untitled](DL%208b9c158a22f04c2eb1a7896aee8a4821/Untitled%206.png)
+![Untitled 6](https://github.com/ssssihoon/Learn/assets/127017020/14543c4d-a27d-4b43-be76-faf579424347)
+
 
 ## Cost Functions
+
+모델의 출력과 실제 정답 사이의 차이를 측정하고, 이를 최소화하여 모델을 훈련시킨다.
+
+딥러닝에서 비용 함수(cost function)는 신경망이 학습하는 데 사용되는 함수입니다.  비용 함수는 종종 손실 함수(loss function) 또는 목적 함수(objective function)라고도 불립니다.
+
+- MSE (Mean Squared Error, 평균 제곱 오차)
+    - MSE는 각 데이터 포인트에 대해 예측값과 실제 값 사이의 제곱 오차를 계산하고, 이를 모든 데이터 포인트에 대해 평균화하여 구합니다. 이렇게 하면 모든 데이터 포인트 간의 오차를 고려하여 전체 오차를 측정할 수 있습니다.
+    
+    ![Untitled 7](https://github.com/ssssihoon/Learn/assets/127017020/f10644e5-7b58-43e5-9202-4efb1a450dca)
+
+    
+- Cross Entropy
+    - 주로 분류모델에서 사용
+    - Cross Entropy는 두 확률 분포 사이의 거리를 나타내며, 모델이 예측한 확률 분포와 실제 클래스의 분포 사이의 차이를 측정합니다.
+    - 이진 클래스, 다중 클래스에서 사용
+    
+    ![Untitled 8](https://github.com/ssssihoon/Learn/assets/127017020/89d34110-f741-4d29-ad9d-70b86dea8c4c)
+
+    
+
+## Gradient Descent
+
+Gradient Descent(경사 하강법)은 함수의 최솟값을 찾기 위해 사용되는 최적화 알고리즘 중 하나입니다. 주어진 비용 함수(또는 목적 함수)를 최소화하는 최적의 매개변수를 찾기 위해 사용됩니다.
+
+경사 하강법은 현재 위치에서 함수의 기울기(gradient)를 계산하고, 그 기울기가 최소화하려는 방향으로 일정한 거리(학습률)만큼 이동합니다. 이 과정을 반복하여 함수의 최솟값에 도달하거나 더 이상 변화가 없을 때까지 반복합니다.
+
+- **Batch Gradient Descent**: 전체 훈련 데이터 세트에 대해 비용 함수의 기울기를 계산하는 방법입니다.
+- **Stochastic Gradient Descent (SGD)**: 각 훈련 데이터 포인트에 대해 비용 함수의 기울기를 계산하는 방법입니다. 이는 전체 데이터 세트를 사용하는 것보다 속도가 빠르지만, 노이즈가 많을 수 있습니다.
+- **Mini-batch Gradient Descent**: 일정 크기의 미니 배치(mini-batch)에 대해 비용 함수의 기울기를 계산하는 방법입니다. 이는 Batch Gradient Descent와 Stochastic Gradient Descent의 중간 지점에 해당하며, 더 빠르게 수렴할 수 있습니다.
