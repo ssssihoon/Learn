@@ -1,5 +1,8 @@
 # RNN
 
+- Many-to-one :
+- One-to many
+
 # 신경망의 기초 이해
 
 ## 인공 신경망의 기본 개념
@@ -49,8 +52,6 @@ ANN, Artificial Neural Network : 행렬 수학을 모델로 삼아 인간의 뉴
 - 인공지능과 뉴런의 관계
     - 뉴런은 시냅스를 거쳐서 수상돌기로 받아들인 외부의 전달물질을 세포체에 저장하다가 자신의 용량을 넘어서면 축삭돌기를 통해 외부로 전달물질을 내보낸다.
     - 인공신경망에서 뉴런 모델은 여러개의 뉴런으로부터 입력값을 받아서 일정 수준이 넘어서면 활성화되어 출력값을 내보낸다.
-
-[https://brunch.co.kr/@gdhan/6](https://brunch.co.kr/@gdhan/6)
 
 ### 활성화 함수
 
@@ -152,12 +153,16 @@ FNN, Feedforward Neural Network 순방향 신경망
 
 ## 순차 데이터의 특성과 응용 분야
 
-Sequential data 순차 데이터 : 텍스트나 시계열 데이터와 같이 시간 및 순서에 의미가 있는 데이터
+Sequential data 순차 데이터 : 
+
+텍스트나 시계열 데이터와 같이 시간 및 순서에 의미가 있는 데이터
+
+순차적 구성 요소가 복잡한 의미와 구문 규칙에 따라 상호 연관되는, 단어, 문장 또는 시계열 데이터 등의 데이터
 
 ### 순차 데이터 특성
 
 - 데이터의 값이 전 후 값 사이에 상관관계를 가질 수 있다.
-- 이전 관측에 영향을 받는다. → FNN과는 거리가 멂.
+- 이전 관측에 영향을 받는다. → FNN과는 거리가 멀다(FNN은 직접적인 값을 출력으로 이용하기 때문에 이전 값을 버림)
 - 대부분이 가변적인 길이로 구성
 - 패턴이 있을 수 있다.
 - 시간적인 순서를 가진다.
@@ -172,13 +177,49 @@ Sequential data 순차 데이터 : 텍스트나 시계열 데이터와 같이 �
 
 ## 순환 신경망의 개념과 구조
 
+### 순환 신경망이란?
+
+- 순차 데이터 입력을 처리하고 특정 순차 데이터 출력으로 변환하도록 훈련된 딥러닝 모델.
+
+### 구조
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%205.png)
+
 ## RNN의 순환 구조와 정보 전달 방식
 
+### 순환 구조
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%206.png)
+
+[https://towardsdatascience.com/recurrent-neural-networks-rnns-3f06d7653a85](https://towardsdatascience.com/recurrent-neural-networks-rnns-3f06d7653a85)
+
+### 정보 전달 방식
+
+- 초기조건(x0 = 0 or 1 or random)이 있어야 한다.
+- 이전의 값 h(t-1)과 현재의 값 h(t)를 이용해 y값을 도출한다.
+- 활성화함수가 적용된 이전의 값을 이용해 y값을 도출.
+
 ## 시간에 따른 정보 처리와 활용 방법
+
+- One-to-One : Input-Onem Out-One : 이미지 캡셔닝(이미지를 받아 이를 설명하는 문장을 만들어냄)
+- Many-to-Many : Input-Many, Out-Many : 번역
+- Many-to-One : Input-Many, Out-One : 예측
+- One-to-Many : Input-One, Out-Many : 생성
+
+[https://www.youtube.com/watch?v=Hn3GHHOXKCE&t=1029s](https://www.youtube.com/watch?v=Hn3GHHOXKCE&t=1029s)
 
 # 장단기 메모리(LSTM)와 게이트 순환 유닛(GRU) 이해
 
 ## RNN의 단점과 문제점 이해
+
+### 단점
+
+- 장기 의존성 처리가 어렵다.
+
+### 문제점
+
+- 병렬화 불가능 : 벡터가 순차적으로 입력되기 때문 → GPU연산의 장점인 병렬화를 사용못함
+- 기울기 소실, 폭발 문제 : 역전파중에 기울기가 너무 작아지거나 커지게 된다.
 
 ## LSTM과 GRU의 등장 배경과 개념
 
