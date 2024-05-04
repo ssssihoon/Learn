@@ -1,8 +1,5 @@
 # RNN
 
-- Many-to-one :
-- One-to many
-
 # 신경망의 기초 이해
 
 ## 인공 신경망의 기본 개념
@@ -214,16 +211,83 @@ Sequential data 순차 데이터 :
 
 ### 단점
 
-- 장기 의존성 처리가 어렵다.
+- 장기 의존성 처리가 어렵다. 이전 타임스텝의 출력을 현재 타임스텝의 입력으로 사용하기 때문
 
 ### 문제점
 
 - 병렬화 불가능 : 벡터가 순차적으로 입력되기 때문 → GPU연산의 장점인 병렬화를 사용못함
-- 기울기 소실, 폭발 문제 : 역전파중에 기울기가 너무 작아지거나 커지게 된다.
+- 기울기 소실, 폭발 문제 :
+    - 타임스텝에서 가중치가 1보다 작은경우 시간이 지날수록 기울기는 거의 0에 가까워짐. → 기울기 소실 → 장기 의존성을 학습하기 어려움
+    - 타임스텝에서 가중치가 1보다 큰 경우 시간이 지날수록 지수적으로 증가 →기울기 폭발 → 모델이 불안정해짐
 
 ## LSTM과 GRU의 등장 배경과 개념
 
+### LSTM
+
+- 개념
+    - RNN이 출력과 먼 위치에 있는 정보를 기억할 수 없다는 단점을 보완하여 장단기 기억을 가능하게 설계한 신경망 구조의 모델
+- 등장 배경
+    - RNN의 Vanishing Gradient 문제, 장기 의존성 문제를 해결하기 위해 등장.
+    - LSTM은 forget gate, input gate 등을 이용해 정보를 기억할지 말지, 얼마큼 사용할기 등을 정하기 때문에 비교적 먼 거리의 정보를 효과적으로 전달 가능함.
+
+### GRU
+
+- 개념
+    - 성능은 LSTM과 유사하고, 복잡했던 LSTM의 구조를 간단화 시킨 모델
+- 등장 배경
+    - 복잡한 구조로 인한 과적합과 계산비용을 해결하고 파라미터 단순화를 하기 위함.
+
 ## 장기 의존성 문제 해결을 위한 LSTM과 GRU의 작동 원리
+
+### LSTM
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%207.png)
+
+[Reference]
+
+[https://medium.com/@anishnama20/understanding-lstm-architecture-pros-and-cons-and-implementation-3e0cca194094](https://medium.com/@anishnama20/understanding-lstm-architecture-pros-and-cons-and-implementation-3e0cca194094)
+
+[https://medium.com/dovvie/deep-learning-long-short-term-memory-model-lstm-d4ee2f005973](https://medium.com/dovvie/deep-learning-long-short-term-memory-model-lstm-d4ee2f005973)
+
+[https://dgkim5360.tistory.com/entry/understanding-long-short-term-memory-lstm-kr](https://dgkim5360.tistory.com/entry/understanding-long-short-term-memory-lstm-kr)
+
+1. Cell State
+
+: 게이트를 통해 Cell State에 담길 정보를 조절해 전달한다. (전체적)
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%208.png)
+
+1. Forget Gate
+
+: 정보를 버릴지 사용할지를 결정하는 게이트
+
+Sigomid 함수 사용(0~1 값을 C(t-1)과 곱함으로 이전 상태의 값을 사용할 지 결정)
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%209.png)
+
+1. Input Gate
+
+: 새로운 정보 중 **어떤 정보**를 Cell State에 저장할 지 결정하는 게이트
+
+tanh layer에서 정보 후보 벡터를 정함.
+
+input layer에서 Sigmoid 함수를 이용해 그 후보 중 어떤 정보를 사용할 지 결정
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%2010.png)
+
+1. Cell State Update
+
+Forget Gate에 의해 삭제되었거나 사용되는 값과 Input Gate를 통해 결정된 새로운 정보를 더함
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%2011.png)
+
+1. Output Gate
+
+input 값에 Sigmoid를 적용해 Cell State로부터 어떤 값을 output 값으로 도출 할 지 정함.
+
+tanh(정한 output값 * Cell State 값) → 필요한 output 값만 내보냄.
+
+![Untitled](RNN%204e3cf4e9ff2b4967a9957ceb0595a1e0/Untitled%2012.png)
 
 # 시퀀스 모델링 문제에 RNN 적용
 
