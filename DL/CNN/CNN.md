@@ -21,7 +21,7 @@
 
 [https://medium.com/latinxinai/what-is-convolution-ceb5a3bab020](https://medium.com/latinxinai/what-is-convolution-ceb5a3bab020)
 
-![https://miro.medium.com/v2/resize:fit:720/format:webp/1*DPncpY0v-0dzc65O8ix46w.gif](https://miro.medium.com/v2/resize:fit:720/format:webp/1*DPncpY0v-0dzc65O8ix46w.gif)
+![1_DPncpY0v-0dzc65O8ix46w-min](https://github.com/ssssihoon/Learn/assets/127017020/13dcce35-bc97-47ff-9d20-b8e53f9dddfe)
 
 이미지 처리로 예시)
 
